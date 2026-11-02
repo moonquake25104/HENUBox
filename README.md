@@ -13,17 +13,13 @@
 ## 界面预览
 
 <p align="center">
-  <img src="docs/images/home.jpg" width="250" alt="首页：今日课程与待办">
-  <img src="docs/images/timetable.jpg" width="250" alt="课表：整周课程与作息">
+  <a href="docs/images/preview.jpg">
+    <img src="docs/images/preview.jpg" width="820" alt="HENUBox 界面预览：首页、课表、Campus、外观与配色">
+  </a>
 </p>
-<p align="center"><sub>首页 · 课表</sub></p>
-<p align="center">
-  <img src="docs/images/campus.jpg" width="250" alt="Campus 校园工具">
-  <img src="docs/images/appearance.jpg" width="250" alt="三种外观与五种配色">
-</p>
-<p align="center"><sub>Campus · 三种外观与五种配色</sub></p>
+<p align="center"><sub>首页 · 课表 · Campus · 三种外观与五种配色</sub></p>
 
-> 截图仅用于展示应用功能；截图中的第三方图片、人物形象、字体等版权归原作者所有。若权利人认为使用不当或涉及侵权，请通过仓库 Issues 联系，我会在确认后及时删除或替换相关图片。
+> 截图仅用于展示应用功能；截图中的第三方图片、人物形象、字体等版权归原作者所有。若权利人认为使用不当或涉及侵权，请通过我的 GitHub 主页（https://github.com/moonquake25104）联系我，我会在确认后及时删除或替换相关图片。
 
 ## 功能
 
