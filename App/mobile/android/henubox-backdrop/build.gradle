@@ -1,0 +1,29 @@
+// Android-only source integration of the project's Apache-2.0 Backdrop snapshot.
+// Keep the existing app Gradle/AGP/SDK baseline; do not build upstream demo targets.
+apply plugin: 'com.android.library'
+apply plugin: 'org.jetbrains.kotlin.multiplatform'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
+
+android {
+    namespace 'com.henubox.backdrop'
+    compileSdk 35
+    defaultConfig { minSdk 28 }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+kotlin {
+    androidTarget { compilerOptions { jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17; freeCompilerArgs.add('-Xcontext-parameters') } }
+    sourceSets {
+        commonMain {
+            dependencies {
+                api 'androidx.compose.runtime:runtime:1.8.3'
+                api 'androidx.compose.ui:ui:1.8.3'
+                implementation 'androidx.compose.foundation:foundation:1.8.3'
+                implementation 'org.jetbrains:annotations:26.0.2'
+            }
+        }
+        androidMain { dependencies { implementation 'androidx.core:core:1.15.0' } }
+    }
+}

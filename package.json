@@ -1,0 +1,10 @@
+{
+  "name": "henubox-source",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "build:android": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/build-android.ps1",
+    "build:web": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/build-mobile-web.ps1",
+    "test:parser": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/test-parser.ps1"
+  }
+}

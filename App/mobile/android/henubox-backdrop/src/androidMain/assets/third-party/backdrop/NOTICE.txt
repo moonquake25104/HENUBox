@@ -1,0 +1,7 @@
+Backdrop (AndroidLiquidGlass), local source snapshot version 2.0.1
+https://github.com/Kyant0/AndroidLiquidGlass
+Copyright Kyant0 and contributors. Apache License 2.0.
+Integrated Android/common source with the original lens/highlight/shadow algorithms.
+Compatibility changes: remove optional Kyant Shapes dispatch in Lens.kt; HENUBox uses Compose RoundedCornerShape. InverseLayerScope blendMode/colorFilter are local properties on Compose 1.8.3.
+Build uses Kotlin 2.2.20 / Compose 1.8.3, without upstream demo or platform targets.
+HENUBox View Backdrop adapter reuses one compositing RenderNode from the existing WebView, without Bitmap capture or duplicated input.

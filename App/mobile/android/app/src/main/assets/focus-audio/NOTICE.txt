@@ -1,0 +1,25 @@
+HENUBox内置专注声音
+
+rain.ogg: 24-second mono excerpt (source 00:04–00:28) of
+"Spring night rain2, Evosmos, Salonika" by ali@k / ali-k, Freesound #156049.
+https://freesound.org/people/ali-k/sounds/156049/
+Redistribution source: https://github.com/abetusk/noixer/tree/main/assets
+Noixer credits explicitly list this sound as CC0 (public domain).
+https://github.com/abetusk/noixer#credits
+
+waves.ogg: 24-second mono excerpt (source 00:04–00:28) of
+"Waves of Hawaii" by florianreichelt, Freesound #450755, CC0.
+https://freesound.org/people/florianreichelt/sounds/450755/
+Redistribution source: https://github.com/abetusk/noixer/tree/main/assets
+
+CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/
+https://creativecommons.org/publicdomain/zero/1.0/legalcode
+Changes: excerpts, mono downmix, 48 kHz, 64 kbit/s Opus, 20 ms endpoint fades,
+peak limiting; metadata removed. Audio credits are retained voluntarily.
+
+pink.ogg and brown.ogg: deterministic noise generated for this project with
+FFmpeg anoisesrc, 48 kHz mono, 48 kbit/s Opus, seed 3102026, 24 seconds.
+No external sound samples. These two generated recordings are dedicated to CC0.
+
+All four files play locally. No sound download or analytics happens in the App.
+Build tooling (FFmpeg from local Android Studio) is not redistributed in the APK.

@@ -1,0 +1,11 @@
+{
+  "name": "henu-browser",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Interactive HENU login helper: opens a dedicated Edge window with an isolated profile and hands the school-domain cookies to the Go parent over stdout. Records no traffic, keystrokes or screenshots.",
+  "type": "module",
+  "main": "helper.mjs",
+  "dependencies": {
+    "playwright-core": "1.49.1"
+  }
+}

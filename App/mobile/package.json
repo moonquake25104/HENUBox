@@ -1,0 +1,26 @@
+{
+  "name": "xique-mobile-shell",
+  "private": true,
+  "version": "0.1.0",
+  "description": "HENUBox Android 壳，使用独立移动资源输出。",
+  "scripts": {
+    "build:web": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ../../scripts/build-mobile-web.ps1",
+    "add:android": "cap add android",
+    "sync": "npm run build:web && cap sync android",
+    "copy": "npm run build:web && cap copy android",
+    "open": "cap open android",
+    "doctor": "cap doctor"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/app": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/local-notifications": "^7.0.0",
+    "@capacitor/network": "^7.0.0",
+    "@capacitor/preferences": "^7.0.0",
+    "@capacitor/status-bar": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0"
+  }
+}

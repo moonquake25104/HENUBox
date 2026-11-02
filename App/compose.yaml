@@ -1,0 +1,56 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-kairos}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      POSTGRES_DB: ${POSTGRES_DB:-kairos}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  api:
+    build:
+      context: ./server
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      KAIROS_DATA_DIR: /data
+      KAIROS_BIND_HOST: 0.0.0.0
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ai_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- \"http://localhost:$${KAIROS_API_PORT:-8080}/healthz/live\" >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  web:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile.web
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/certs:/etc/nginx/certs:ro
+    depends_on:
+      api:
+        condition: service_started
+
+volumes:
+  pg_data:
+  ai_data:

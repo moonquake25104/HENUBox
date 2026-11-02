@@ -1,0 +1,686 @@
+/* Mobile-only composition. The desktop timetable and stored course data are unchanged. */
+.xm-navigation {
+  --nav-duration: 380ms;
+  --nav-ease: cubic-bezier(0.22, 0.8, 0.25, 1);
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  border-radius: 28px;
+  width: calc(100% - 32px);
+  isolation: isolate;
+  transition: grid-template-columns var(--nav-duration) var(--nav-ease);
+  box-shadow:
+    0 0 0 10px #f8f8f8bb,
+    0 10px 25px #00000010;
+}
+/* A single persistent capsule moves between tabs. All four grid tracks keep
+   the same total weight (1.65 + 1 + 1 + 1), so icon and capsule motion agree. */
+.xm-nav-indicator {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  height: 44px;
+  width: calc((100% - 28px) / 4.65 * 1.65);
+  border-radius: 24px;
+  background: #636467;
+  pointer-events: none;
+  z-index: -1;
+  transform: translateX(calc(var(--nav-index) * (100% / 1.65 + 4px)));
+  transition: transform var(--nav-duration) var(--nav-ease);
+}
+.xm-navigation button,
+.xm-navigation button.selected {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 6px;
+  gap: 0;
+  background: transparent;
+  touch-action: manipulation;
+}
+.xm-navigation .xm-nav-label {
+  display: block;
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  margin-left: 0;
+  transition:
+    max-width var(--nav-duration) var(--nav-ease),
+    margin-left var(--nav-duration) var(--nav-ease),
+    opacity 180ms ease;
+}
+.xm-navigation .selected .xm-nav-label {
+  max-width: 2em;
+  margin-left: 8px;
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .xm-navigation,
+  .xm-nav-indicator,
+  .xm-navigation .xm-nav-label {
+    transition: none;
+  }
+}
+.dark .xm-navigation {
+  box-shadow:
+    0 0 0 10px #18191cbb,
+    0 10px 25px #00000018;
+}
+.xm-app {
+  padding-bottom: calc(108px + env(safe-area-inset-bottom));
+}
+.xm-week-add { position:absolute; left:0; width:100%; border:0; background:transparent; padding:0; z-index:0; }
+.xm-week-add.is-selected { left:1px; width:calc(100% - 2px); height:calc(100% - 2px); border:1px dashed #b8c5d0; border-radius:7px; background:#edf1f5; color:#28323d; display:grid; place-items:center; box-shadow:inset 0 0 0 2px var(--xq-surface); touch-action:manipulation; }
+.dark .xm-week-add.is-selected { background:#383f49; color:#f4f7fb; border-color:#8fa3b8; }
+.xm-hero-wrap { position:relative; }
+.xm-hero-photo { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; z-index:-2; }
+.xm-hero.has-photo::after { background:linear-gradient(180deg,#1118270d 0%,#11182745 32%,#111827d9 100%); }
+.xm-hero-customize { position:absolute; top:13px; right:13px; z-index:3; display:flex; align-items:center; gap:6px; min-height:36px; padding:5px 9px; border-radius:8px; border:1px solid #ffffff30; background:#ffffff20; backdrop-filter:blur(8px); color:#fff; font-size:11px; letter-spacing:1px; }
+.xm-hero .xm-light-label { min-height:36px; align-items:center; }
+.xm-background-modal { color:var(--xq-text); background:var(--xq-surface); max-height:calc(100dvh - 32px); overflow-y:auto; border-radius:24px; }
+.xm-background-hint { font-size:13px; line-height:1.8; color:var(--xq-muted); margin:12px 0 20px; }
+.xm-background-preview { width:100%; max-height:210px; aspect-ratio:16/9; object-fit:cover; border-radius:16px; margin-bottom:20px; }
+.xm-background-modal .xm-primary { width:100%; display:flex; align-items:center; gap:8px; }
+.xm-background-reset { width:100%; justify-content:center; gap:8px; margin-top:12px; }
+.xm-background-done { display:flex; align-items:center; justify-content:center; width:100%; min-height:46px; margin:18px auto 0; padding:12px 20px; border:1px solid var(--xq-border); border-radius:15px; background:var(--xq-bg); color:var(--xq-text); font-size:14px; font-weight:600; }
+.xm-login-timetable { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:15px; padding:28px 20px; text-align:center; }
+.xm-login-mark { width:62px; height:62px; display:grid; place-items:center; border-radius:22px; color:#4e7f70; background:#e8f2ee; margin-bottom:7px; }
+.xm-login-timetable h3 { font-size:18px; font-weight:650; margin:0; }
+.xm-login-timetable p { font-size:13px; color:var(--xq-muted); line-height:1.8; max-width:250px; margin:0 0 8px; }
+.xm-login-timetable small { font-size:11px; color:var(--xq-muted); }
+.dark .xm-login-mark { background:#2b4038; color:#b8d8cb; }
+.xique-mobile-v2 .xm-course-modal, .xique-mobile-v2 .xq-course-modal { max-height:calc(100dvh - 32px); overflow-y:auto; overscroll-behavior:contain; }
+.xm-week-add:focus-visible { background:#86d6c030; outline:1px solid #75b5a2; outline-offset:-2px; }
+.xm-week-course { z-index:1; }
+.xql-campuses { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; margin:18px 0; }
+.xql-campuses button { padding:16px 5px; border-radius:16px; border:1px solid var(--xq-border); background:var(--xq-surface); color:var(--xq-text); font-size:14px; }
+.xql-campuses button small { display:block; font-size:10px; opacity:.7; margin-top:6px; }
+.xql-campuses button:disabled { opacity:.5; cursor:default; }
+.xql-campuses button.selected { background:#dceee7; color:#245a4c; border-color:#4a8d77; box-shadow:0 0 0 1px #4a8d77; }
+.dark .xql-campuses button.selected { background:#304e43; color:#e1f8ed; border-color:#90c4ad; }
+.xql-import { width:100%; justify-content:center; margin-top:18px; }
+.xql-settings summary { cursor:pointer; }
+.xql-periods p { display:flex; justify-content:space-between; gap:12px; font-size:12px; margin:4px 0; }
+.xm-app .xm-primary {
+  background: #303135;
+  color: #fff;
+}
+.dark .xm-app .xm-primary {
+  background: #eeeef1;
+  color: #202126;
+}
+.xm-page-campus,
+.xm-page-timetable {
+  height: 100dvh;
+  min-height: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 18px 18px calc(90px + env(safe-area-inset-bottom));
+}
+.xm-page-campus > .xm-heading,
+.xm-page-timetable > .xm-heading {
+  flex-shrink: 0;
+  margin: 4px 4px 17px;
+}
+.xm-page-campus .xm-heading h1,
+.xm-page-timetable .xm-heading h1 {
+  font-size: 35px;
+  letter-spacing: -1.3px;
+}
+.xm-page-campus .xm-heading p,
+.xm-page-timetable .xm-heading p {
+  font-size: 12px;
+  margin-top: 7px;
+}
+.xm-page-campus .xm-avatar,
+.xm-page-timetable .xm-avatar {
+  width: 36px;
+  height: 43px;
+}
+.xm-page-campus > main,
+.xm-page-timetable > main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+.xm-page-campus > main { overflow-y: auto; overscroll-behavior: contain; padding-bottom: 12px; }
+.xm-page-campus .xm-service-card.xm-todos-entry { grid-column:1; grid-row:4; background:#F0E4BE; color:#66542D; }
+.xm-page-campus .xm-campus-caption {
+  flex-shrink: 0;
+  padding: 12px 15px;
+  border-radius: 18px;
+  font-size: 11px;
+  margin-bottom: 16px;
+}
+.xm-page-campus .xm-campus-grid {
+  flex: 0 0 auto;
+  height: auto;
+  min-height: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(4, clamp(150px, calc((min(64dvh, 530px) - 28px) / 3), 190px));
+  gap: 14px;
+}
+.xm-page-campus .xm-service-card {
+  grid-column: auto;
+  grid-row: auto;
+  padding: 17px 15px;
+  border-radius: 23px;
+  min-height: 0;
+}
+.xm-page-campus .xm-service-card.xm-classroom {
+  grid-column: 1;
+  grid-row: 1;
+}
+.xm-page-campus .xm-service-card.xm-electricity {
+  grid-column: 2;
+  grid-row: 1;
+}
+.xm-page-campus .xm-service-card.xm-timetable-entry {
+  grid-column: 1;
+  grid-row: 2;
+}
+.xm-page-campus .xm-service-card.xm-library {
+  grid-column: 2;
+  grid-row: 2;
+}
+.xm-page-campus .xm-service-card.xm-email { grid-column:1; grid-row:3; background:#CBDCF4; color:#29476A; }
+.xm-page-campus .xm-service-card h2 {
+  font-size: 18px;
+  margin: 10px 0 5px;
+  letter-spacing: -0.35px;
+}
+.xm-page-campus .xm-service-card p {
+  font-size: 10px;
+  line-height: 1.6;
+  max-width: 130px;
+}
+.xm-page-campus .xm-pending,
+.xm-page-campus .xm-prototype {
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+.xm-page-campus .xm-prototype {
+  display: inline-flex;
+  background: #fff0c9;
+  color: #745316;
+  font-weight: 650;
+}
+.xm-page-campus .xm-service-card > svg {
+  height: 76%;
+  opacity: 0.86;
+  mask-image: linear-gradient(to bottom, transparent, #000 50%);
+}
+.xm-page-campus .xm-card-arrow {
+  width: 27px;
+  height: 27px;
+  bottom: 13px;
+  right: 13px;
+}
+.xm-page-campus .xm-campus-note {
+  flex-shrink: 0;
+  font-size: 10px;
+  line-height: 1.7;
+  margin: 15px 3px 0;
+  padding: 0;
+}
+.xm-unscheduled-modal { max-height:calc(100dvh - 32px); overflow:auto; color:var(--xq-text); background:var(--xq-surface); border-radius:24px; }
+.xm-unscheduled-modal p { font-size:13px; line-height:1.8; margin:14px 0; }
+.xm-unscheduled-modal ul { padding:0; margin:16px 0; list-style:none; }
+.xm-unscheduled-modal li { padding:12px 14px; border-radius:12px; background:var(--xq-bg); margin:8px 0; }
+.xm-unscheduled-modal li strong { display:block; font-size:14px; }
+.xm-unscheduled-modal li small,.xm-unscheduled-modal li span { display:block; color:var(--xq-muted); font-size:11px; margin-top:5px; }
+.xm-unscheduled-modal > .xm-primary,.xm-unscheduled-modal > .xq-button { width:100%; justify-content:center; margin-top:12px; }
+.xm-page-timetable {
+  padding: 10px 8px calc(80px + env(safe-area-inset-bottom));
+}
+.xm-page-timetable > .xm-heading {
+  margin: 0 6px 8px;
+}
+.xm-page-timetable .xm-heading h1 {
+  font-size: 26px;
+  letter-spacing: -0.9px;
+}
+.xm-page-timetable .xm-heading p {
+  display: none;
+}
+.xm-page-timetable .xm-avatar {
+  width: 28px;
+  height: 32px;
+}
+.xm-page-timetable .xm-timetable {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+.xm-timetable .xq-schedule-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "semester actions" "week week";
+  gap: 6px 8px;
+  flex-shrink: 0;
+  margin: 0;
+}
+.xm-timetable .xq-semester-picker {
+  grid-area: semester;
+  width: 100%;
+  min-width: 0;
+  height: 35px;
+  max-width: none;
+  font-size: 11px;
+  padding: 0 10px;
+  border-radius: 13px;
+}
+.xm-timetable .xq-semester-picker select {
+  min-width: 0;
+  max-width: 100%;
+  font-size: 11px;
+}
+.xm-timetable .xq-semester-picker svg {
+  width: 14px;
+  flex-shrink: 0;
+}
+.xm-timetable .xq-week-control {
+  grid-area: week;
+  justify-content: center;
+  gap: 4px;
+  min-height: 34px;
+}
+.xm-timetable .xq-week-control select {
+  font-size: 13px;
+  max-width: 96px;
+}
+.xm-timetable .xq-week-control .xq-icon-button {
+  width: 34px;
+  height: 34px;
+}
+.xm-timetable .xq-current-week {
+  font-size: 10px;
+  padding: 5px 9px;
+  margin-left: 8px;
+}
+.xm-timetable .xq-view-actions {
+  grid-area: actions;
+  gap: 5px;
+}
+.xm-timetable .xq-view-toggle {
+  padding: 3px;
+  border-radius: 11px;
+  gap: 0;
+}
+.xm-timetable .xq-view-toggle button {
+  width: 31px;
+  height: 31px;
+}
+.xm-timetable .xq-icon-button {
+  width: 35px;
+  height: 35px;
+}
+.xm-timetable .xq-schedule-panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  margin-top: 5px;
+  border-radius: 18px;
+  overflow: hidden;
+}
+.xm-timetable .xq-schedule-caption {
+  flex-shrink: 0;
+  padding: 4px 9px;
+  font-size: 9px;
+  min-height: 24px;
+}
+.xm-timetable .xm-mode-week .xq-desktop-courses {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+.xm-timetable .xq-schedule-note {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 8px;
+  line-height: 1.4;
+  padding: 0;
+  margin: 5px 3px 0;
+}
+.xm-timetable .xq-schedule-note span {
+  gap: 4px;
+}
+.xm-compact-week {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+}
+.xm-week-head {
+  display: grid;
+  grid-template-columns: 36px repeat(var(--xm-week-days, 7), minmax(0, 1fr));
+  flex-shrink: 0;
+  height: 39px;
+  border-bottom: 1px solid var(--xq-border);
+}
+.xm-week-head > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+  border-left: 1px solid var(--xq-border);
+}
+.xm-week-head span {
+  font-size: 9px;
+  line-height: 1.2;
+  color: var(--xq-muted);
+}
+.xm-week-head strong {
+  font-size: 10px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--xq-text);
+}
+.xm-week-head .xm-axis-heading {
+  align-self: center;
+  text-align: center;
+  font-size: 8px;
+}
+.xm-week-head .is-today {
+  background: var(--xq-soft);
+}
+.xm-week-head .is-today strong {
+  color: #3b8269;
+}
+.dark .xm-week-head .is-today strong {
+  color: #9cdcc5;
+}
+.dark .xm-break-band,
+.dark .xm-break-time {
+  background: #292a30;
+  color: #9aa39e;
+}
+.xm-week-body {
+  position: relative;
+  display: grid;
+  grid-template-columns: 36px repeat(var(--xm-week-days, 7), minmax(0, 1fr));
+  flex: 1;
+  min-height: 0;
+}
+.xm-grid-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  height: 1px;
+  background: var(--xq-border);
+  pointer-events: none;
+}
+.xm-break-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-block: 1px solid var(--xq-border);
+  background: #f4f6f5;
+  color: #8c9691;
+  font-size: 9px;
+  letter-spacing: 3px;
+  pointer-events: none;
+}
+.xm-break-time {
+  position: absolute;
+  inset-inline: 0;
+  border-bottom: 1px solid var(--xq-border);
+  background: #f4f6f5;
+  pointer-events: none;
+}
+.xm-week-axis,
+.xm-week-day {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  min-height: 0;
+}
+.xm-week-course {
+  z-index: 2;
+}
+.xm-period-time {
+  position: absolute;
+  inset-inline: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  color: var(--xq-muted);
+  border-bottom: 1px solid var(--xq-border);
+  overflow: hidden;
+}
+.xm-period-time b {
+  font-size: 7px;
+  line-height: 1.1;
+  font-weight: 600;
+}
+.xm-period-time time {
+  font-size: 8px;
+  line-height: 1.15;
+  letter-spacing: -0.2px;
+  font-variant-numeric: tabular-nums;
+}
+.xm-period-time time:last-child {
+  opacity: 0.8;
+}
+@media (max-height: 650px) {
+  .xm-period-time b {
+    display: none;
+  }
+  .xm-period-time time {
+    font-size: 7px;
+  }
+}
+.xm-week-axis > span {
+  position: absolute;
+  font-size: 8px;
+  line-height: 1;
+  left: 2px;
+  letter-spacing: -0.4px;
+  color: var(--xq-muted);
+  transform: translateY(-50%);
+}
+.xm-week-axis > span.first {
+  transform: translateY(2px);
+}
+.xm-week-axis > span.last {
+  transform: translateY(-110%);
+}
+.xm-week-day {
+  border-left: 1px solid var(--xq-border);
+}
+.xm-week-day.is-today {
+  background: #88baa30a;
+}
+.xm-week-course {
+  position: absolute;
+  border: 0;
+  border-radius: 5px;
+  min-width: 0;
+  min-height: 16px;
+  padding: 4px 2px;
+  text-align: left;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  box-shadow: inset 0 0 0 1px #00000008;
+  touch-action: manipulation;
+}
+.xm-week-course strong {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.15;
+  flex-shrink: 0;
+}
+.xm-week-course > span {
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: 8px;
+  line-height: 1.2;
+  opacity: 0.85;
+  min-height: 0;
+}
+.xm-week-empty {
+  position: absolute;
+  inset: 40% 30px auto;
+  text-align: center;
+  font-size: 12px;
+  color: var(--xq-muted);
+}
+.xm-page-timetable:has(.xm-mode-list) {
+  height: auto;
+  min-height: 100dvh;
+  overflow: visible;
+}
+.xm-page-timetable:has(.xm-mode-list) .xq-schedule-panel {
+  flex: initial;
+  overflow: visible;
+}
+.xm-timetable .xm-mode-list .xq-course-list-item {
+  padding: 14px 10px;
+}
+.xm-timetable .xm-mode-list .xq-list-time {
+  font-size: 11px;
+}
+.xm-timetable .xm-mode-list .xq-list-title strong {
+  font-size: 12px;
+}
+@media (max-height: 650px) {
+  .xm-page-campus,
+  .xm-page-timetable {
+    padding-top: 10px;
+  }
+  .xm-page-campus > .xm-heading,
+  .xm-page-timetable > .xm-heading {
+    margin-bottom: 10px;
+  }
+  .xm-page-campus .xm-heading h1,
+  .xm-page-timetable .xm-heading h1 {
+    font-size: 29px;
+  }
+  .xm-page-campus .xm-campus-caption {
+    padding: 9px 12px;
+    margin-bottom: 12px;
+  }
+  .xm-page-campus .xm-service-card {
+    padding: 12px;
+  }
+  .xm-page-campus .xm-service-card h2 {
+    font-size: 16px;
+    margin: 7px 0 4px;
+  }
+  .xm-page-campus .xm-campus-note {
+    margin-top: 9px;
+  }
+  .xm-week-course strong {
+    font-size: 9px;
+    -webkit-line-clamp: 2;
+  }
+  .xm-week-course > span {
+    font-size: 8px;
+    -webkit-line-clamp: 1;
+  }
+}
+@media (min-width: 600px) {
+  .xm-page-campus,
+  .xm-page-timetable {
+    padding-top: 24px;
+    padding-inline: 28px;
+  }
+  .xm-week-head {
+    height: 44px;
+  }
+  .xm-week-course {
+    padding: 5px;
+  }
+  .xm-week-course strong {
+    font-size: 12px;
+  }
+  .xm-week-course > span {
+    font-size: 10px;
+  }
+  .xm-page-campus .xm-service-card h2 {
+    font-size: 21px;
+  }
+  .xm-page-campus .xm-service-card p {
+    font-size: 12px;
+  }
+}
+
+.xm-course-color {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--xq-border);
+}
+.xm-course-color-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+.xm-course-color-title strong {
+  font-size: 12px;
+  font-weight: 750;
+}
+.xm-course-color-title span {
+  color: var(--xq-muted);
+  font-size: 9px;
+}
+.xm-course-color-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 9px;
+}
+.xm-course-color-dot {
+  width: 27px;
+  height: 27px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px #00000012;
+}
+.xm-course-color-dot.selected {
+  box-shadow:
+    0 0 0 2px var(--xq-surface, #fff),
+    0 0 0 4px #303135;
+}
+.xm-course-color-dot:disabled {
+  opacity: 0.55;
+}
+.xm-course-color-error {
+  margin: 7px 0 0;
+  color: #a34f3b;
+  font-size: 10px;
+}
+.dark .xm-course-color-dot.selected {
+  box-shadow:
+    0 0 0 2px var(--xq-surface, #222329),
+    0 0 0 4px #ececef;
+}

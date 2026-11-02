@@ -1,0 +1,17 @@
+{
+  "appId": "com.xique.assistant",
+  "appName": "HENUBox",
+  "webDir": "../../runtime/build/mobile-web",
+  "loggingBehavior": "none",
+  "android": {
+    "adjustMarginsForEdgeToEdge": "auto",
+    "webContentsDebuggingEnabled": false,
+    "allowMixedContent": false,
+    "captureInput": true,
+    "backgroundColor": "#ffffff"
+  },
+  "server": {
+    "androidScheme": "https",
+    "cleartext": false
+  }
+}

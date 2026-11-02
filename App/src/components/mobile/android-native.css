@@ -1,0 +1,46 @@
+/* Opt-in only: classic selectors and geometry are intentionally untouched. */
+html[data-ui-style=android] body.xique-mobile-v2{background:var(--background);color:var(--xq-text)}
+html[data-ui-style=android] .xm-app{font-weight:400}
+html[data-ui-style=android] :is(.xm-app,.xt-page,.xm-classroom-overlay,.xm-focus-page,.xq-local-school) svg:not(.xm-theme-art){stroke-width:1.65}
+html[data-ui-style=android] :is(.xm-daily-note,.xm-save-strip,.xm-campus-caption,.xm-day-row,.xm-empty-note,.xp-card,.xp-account,.xt-panel,.xm-feature-modal,.xm-course-modal,.xm-background-modal){background:var(--xq-surface);border:1px solid var(--xq-border);border-radius:13px!important;box-shadow:none}
+html[data-ui-style=android] :is(.xm-heading h1,.xp-header h1,.xp-profile h1){letter-spacing:-.6px;font-weight:700}
+html[data-ui-style=android] .xm-hero{border-radius:15px}
+html[data-ui-style=android] :is(.xm-hero-customize,.xm-light-label){border-radius:7px}
+html[data-ui-style=android] .xm-campus-caption{border-radius:9px!important}
+html[data-ui-style=android] .xm-service-card{background:var(--xq-surface)!important;color:var(--xq-text);border:1px solid var(--xq-border);border-radius:13px;box-shadow:none}
+html[data-ui-style=android] .xm-service-card:nth-child(3n+1){background:var(--xq-soft)!important}
+html[data-ui-style=android] .xm-service-card :is(.xm-live,.xm-pending){color:var(--xq-blue);border:0;border-bottom:2px solid var(--xq-blue);border-radius:0;background:none;padding:0 0 4px;font-weight:550;opacity:1}
+html[data-ui-style=android] .xm-service-card h2{font-weight:650;letter-spacing:0;color:inherit!important}
+html[data-ui-style=android] .xm-service-card p{color:var(--xq-muted)}
+html[data-ui-style=android] .xm-service-card>.xm-theme-art{mask-image:none;height:75%;color:var(--xq-blue);opacity:.65}
+html[data-ui-style=android] .xm-card-arrow{border:1px solid var(--xq-border);border-radius:7px;background:var(--xq-surface);color:var(--xq-blue)}
+html[data-ui-style=android] .xm-navigation{background:var(--xq-surface);color:var(--xq-text);border:1px solid var(--xq-border);border-radius:13px;box-shadow:0 4px 16px #1010200c;backdrop-filter:none}
+html[data-ui-style=android] .xm-navigation button{color:var(--xq-muted);border-radius:7px}
+html[data-ui-style=android] .xm-navigation button.selected{color:var(--xq-blue)}
+html[data-ui-style=android] .xm-navigation .xm-nav-indicator{border-radius:7px;background:var(--xq-soft);box-shadow:none;border-bottom:2px solid var(--xq-blue)}
+html[data-ui-style=android] :is(.xp-brand,.xp-account-icon,.xp-row-icon){background:var(--xq-soft);color:var(--xq-blue);border-radius:8px}
+html[data-ui-style=android] :is(.xp-group>h2,.xt-section-label){color:var(--xq-blue)}
+html[data-ui-style=android] :is(.xp-segment,.xq-view-toggle,.xp-palette-grid>button,.xp-palette-preview,.xt-tabs,.xm-room-period-presets,.xf-modes){border-radius:8px;border:1px solid var(--xq-border)}
+html[data-ui-style=android] :is(.xp-segment>button,.xm-primary,.xt-primary,.xm-room-period-presets>button,.xf-modes>button){border-radius:6px}
+html[data-ui-style=android] .xp-segment>button[aria-pressed=true]{background:var(--xq-blue);color:var(--pref-on-primary)}
+html[data-ui-style=android] :is(.xq-schedule-panel,.xm-week-table,.xm-period-block,.xt-row,.xm-room-row,.xm-room-filters,.xm-classroom-card){border-radius:10px!important;border-color:var(--xq-border);box-shadow:none}
+html[data-ui-style=android] :is(.xm-week-grid,.xq-week-grid){--grid-line:var(--xq-border)}
+html[data-ui-style=android] :is(.xp-copy,.xp-row-copy small){color:var(--xq-muted)}
+/* Glass receives illustrated, translucent still-life artwork, never plain tiles. */
+html[data-ui-style=glass]{--xm-glass-tint:#ffffffb0;--xm-glass-line:#ffffffa6}
+html.dark[data-ui-style=glass]{--xm-glass-tint:#242c36b8;--xm-glass-line:#a4c8e14d}
+html[data-ui-style=glass] .xm-service-card{background:linear-gradient(140deg,#e7e9fb 0%,#bbc8e2 53%,#b2d8dd 100%)!important;color:#21364b;border:1px solid #ffffffb3;box-shadow:inset 0 1px 0 #ffffffbf,0 4px 14px #25384f0d}
+html[data-ui-style=glass] .xm-service-card:nth-child(3n+2){background:linear-gradient(135deg,#e0f3ec,#b9ded7 54%,#90c7c2)!important;color:#224744}
+html[data-ui-style=glass] .xm-service-card:nth-child(3n){background:linear-gradient(135deg,#f6e5dd,#e6c8cd 54%,#cac5e3)!important;color:#4b3b53}
+html.dark[data-ui-style=glass] .xm-service-card{background:linear-gradient(135deg,#34485f,#354563 54%,#314f59)!important;color:#f0f5ff;border-color:#c1ddf54d}
+html.dark[data-ui-style=glass] .xm-service-card:nth-child(3n+2){background:linear-gradient(135deg,#294d4e,#345c56 54%,#294b55)!important;color:#efffff}
+html.dark[data-ui-style=glass] .xm-service-card:nth-child(3n){background:linear-gradient(135deg,#5a4859,#50445e 54%,#3d4963)!important;color:#fff4fc}
+html[data-ui-style=glass] .xm-service-card>.xm-theme-art{mask-image:none;height:75%}
+html[data-ui-style=glass] .xm-service-card :is(.xm-live,.xm-pending){background:#ffffff40;border:1px solid #ffffff8c;color:inherit;backdrop-filter:blur(2px);box-shadow:inset 0 1px #ffffff73}
+html.dark[data-ui-style=glass] .xm-service-card :is(.xm-live,.xm-pending){background:#ffffff16;border-color:#ffffff40}
+html[data-ui-style=glass] .xm-card-arrow{background:#ffffff3b;border:1px solid #ffffff7a;backdrop-filter:blur(2px);color:inherit}
+/* Content really passes beneath the clear capsule. End padding belongs inside
+   the scroller, so the last action can still be brought above the navigation. */
+html[data-ui-style=glass] .xm-app:not(.xm-page-timetable){height:100dvh;min-height:0;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden;padding-bottom:env(safe-area-inset-bottom)}
+html[data-ui-style=glass] .xm-app:not(.xm-page-timetable)>main{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:calc(100px + env(safe-area-inset-bottom));scroll-padding-bottom:calc(100px + env(safe-area-inset-bottom))}
+@media(prefers-reduced-transparency:reduce),(prefers-contrast:more){html[data-ui-style=glass] .xm-navigation{background:transparent;backdrop-filter:none;border-color:var(--xq-text)}}

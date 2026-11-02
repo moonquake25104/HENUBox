@@ -1,0 +1,40 @@
+// M1 shared native core: local workspace storage, Keystore session crypto,
+// fixed-endpoint school HTTP client, login container IPC and operation state
+// machine. Plain Java only — no Capacitor dependency here; the probe app and
+// (in M2) the main app call these service classes directly.
+apply plugin: 'com.android.library'
+apply from: rootProject.file('variables.gradle')
+
+android {
+    namespace 'com.xique.assistant.henu'
+    compileSdk rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion 23
+        // Direct connection itself requires API 28+ (WebView data-directory
+        // suffix); callers gate at runtime and report UNSUPPORTED_DEVICE.
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+        encoding 'UTF-8'
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+// The parser AAR is a build artifact produced by scripts/build-parser.ps1
+// (gomobile bind, arm64). Kept in the module so the path is explicit.
+dependencies {
+    implementation files('libs/henuparse.aar')
+    implementation 'androidx.annotation:annotation:1.9.1'
+}

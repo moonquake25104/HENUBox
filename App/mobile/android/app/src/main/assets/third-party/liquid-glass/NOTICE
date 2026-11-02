@@ -1,0 +1,13 @@
+Native Liquid Glass navigation adaptation in NativeGlassNav.java
+
+Effect pipeline and circle-map lens profile adapted from the user-provided
+skill-liquid-glass (SdfShader.kt and the low-blur/lens/highlight guidance),
+which is derived from AndroidLiquidGlass (Backdrop):
+https://github.com/Kyant0/AndroidLiquidGlass
+Copyright (c) Kyant0 and contributors
+Licensed under the Apache License, Version 2.0.
+
+The implementation is an Android View / RuntimeShader adaptation for Xique's
+existing WebView shell. It is not the upstream Compose component or a claim
+of pixel-identical Apple Liquid Glass behavior. Navigation, bounded WebView
+sampling, lifecycle controls and metrics were added for this application.

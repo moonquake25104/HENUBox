@@ -1,0 +1,16 @@
+# Normalize text files so Linux/macOS checkouts and GitHub diffs stay consistent.
+* text=auto eol=lf
+
+# Windows entry points keep CRLF so they run in older PowerShell/cmd contexts.
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary assets
+*.jar binary
+*.ogg binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary

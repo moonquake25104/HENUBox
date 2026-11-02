@@ -1,0 +1,609 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-heading: var(--font-sans);
+    --font-sans: 'Geist Variable', sans-serif;
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/*
+  Chromium < 111 不支持 oklch()，用 @supports 进行渐进增强。
+  低于 111 的浏览器使用 sRGB 回退色，支持 111+ 则自动覆盖。
+*/
+:root {
+    /* sRGB 回退(Chrome < 111) */
+    --background: #f2f2f2;
+    --foreground: #2e2e2e;
+    --card: #ffffff;
+    --card-foreground: #2e2e2e;
+    --popover: #ffffff;
+    --popover-foreground: #2e2e2e;
+    --primary: #2563eb;
+    --primary-foreground: #fafafa;
+    --secondary: #f0f0f0;
+    --secondary-foreground: #333333;
+    --muted: #f0f0f0;
+    --muted-foreground: #737373;
+    --accent: #f0f0f0;
+    --accent-foreground: #333333;
+    --destructive: #dc2626;
+    --border: #dbdbdb;
+    --input: #dbdbdb;
+    --ring: #3b82f6;
+    --radius: 0.375rem;
+    --sidebar: #f5f5f5;
+    --sidebar-foreground: #2e2e2e;
+    --sidebar-primary: #2563eb;
+    --sidebar-primary-foreground: #fafafa;
+    --sidebar-accent: #f0f0f0;
+    --sidebar-accent-foreground: #333333;
+    --sidebar-border: #dbdbdb;
+    --sidebar-ring: #3b82f6;
+    --chart-1: #b3b3b3;
+    --chart-2: #999999;
+    --chart-3: #808080;
+    --chart-4: #666666;
+    --chart-5: #4d4d4d;
+}
+
+/* oklch 渐进增强 (Chrome 111+) */
+@supports (color: oklch(0 0 0)) {
+    :root {
+        --background: oklch(0.95 0 0);
+        --foreground: oklch(0.18 0 0);
+        --card: oklch(1 0 0);
+        --card-foreground: oklch(0.18 0 0);
+        --popover: oklch(1 0 0);
+        --popover-foreground: oklch(0.18 0 0);
+        --primary: oklch(0.58 0.17 235);
+        --primary-foreground: oklch(0.98 0 0);
+        --secondary: oklch(0.94 0 0);
+        --secondary-foreground: oklch(0.2 0 0);
+        --muted: oklch(0.94 0 0);
+        --muted-foreground: oklch(0.45 0 0);
+        --accent: oklch(0.94 0 0);
+        --accent-foreground: oklch(0.2 0 0);
+        --destructive: oklch(0.55 0.25 22);
+        --border: oklch(0.86 0 0);
+        --input: oklch(0.86 0 0);
+        --ring: oklch(0.62 0.16 235);
+        --sidebar: oklch(0.96 0 0);
+        --sidebar-foreground: oklch(0.18 0 0);
+        --sidebar-primary: oklch(0.58 0.17 235);
+        --sidebar-primary-foreground: oklch(0.98 0 0);
+        --sidebar-accent: oklch(0.94 0 0);
+        --sidebar-accent-foreground: oklch(0.2 0 0);
+        --sidebar-border: oklch(0.86 0 0);
+        --sidebar-ring: oklch(0.62 0.16 235);
+        --chart-1: oklch(0.7 0 0);
+        --chart-2: oklch(0.6 0 0);
+        --chart-3: oklch(0.5 0 0);
+        --chart-4: oklch(0.4 0 0);
+        --chart-5: oklch(0.3 0 0);
+    }
+}
+
+.dark {
+    /* sRGB 回退 */
+    --background: #292929;
+    --foreground: #ebebeb;
+    --card: #3d3d3d;
+    --card-foreground: #ebebeb;
+    --popover: rgba(56, 56, 56, 0.85);
+    --popover-foreground: #ebebeb;
+    --primary: #60a5fa;
+    --primary-foreground: #fafafa;
+    --secondary: #3d3d3d;
+    --secondary-foreground: #e6e6e6;
+    --muted: #383838;
+    --muted-foreground: #b8b8b8;
+    --accent: #404040;
+    --accent-foreground: #ebebeb;
+    --destructive: #ef4444;
+    --border: rgba(255, 255, 255, 0.12);
+    --input: rgba(255, 255, 255, 0.14);
+    --ring: #60a5fa;
+    --sidebar: var(--background);
+    --sidebar-foreground: var(--foreground);
+    --sidebar-primary: #60a5fa;
+    --sidebar-primary-foreground: #fafafa;
+    --sidebar-accent: #404040;
+    --sidebar-accent-foreground: #ebebeb;
+    --sidebar-border: rgba(255, 255, 255, 0.08);
+    --sidebar-ring: #60a5fa;
+    --chart-1: #b3b3b3;
+    --chart-2: #999999;
+    --chart-3: #808080;
+    --chart-4: #666666;
+    --chart-5: #4d4d4d;
+}
+
+@supports (color: oklch(0 0 0)) {
+    .dark {
+        --background: oklch(0.16 0 0);
+        --foreground: oklch(0.92 0 0);
+        --card: oklch(0.24 0 0);
+        --card-foreground: oklch(0.92 0 0);
+        --popover: oklch(0.22 0 0 / 0.85);
+        --popover-foreground: oklch(0.92 0 0);
+        --primary: oklch(0.70 0.14 235);
+        --primary-foreground: oklch(0.98 0 0);
+        --secondary: oklch(0.24 0 0);
+        --secondary-foreground: oklch(0.9 0 0);
+        --muted: oklch(0.22 0 0);
+        --muted-foreground: oklch(0.72 0 0);
+        --accent: oklch(0.25 0 0);
+        --accent-foreground: oklch(0.92 0 0);
+        --destructive: oklch(0.55 0.2 20);
+        --border: oklch(1 0 0 / 0.12);
+        --input: oklch(1 0 0 / 0.14);
+        --ring: oklch(0.70 0.14 235);
+        --sidebar: var(--background);
+        --sidebar-foreground: var(--foreground);
+        --sidebar-primary: oklch(0.70 0.14 235);
+        --sidebar-primary-foreground: oklch(0.98 0 0);
+        --sidebar-accent: oklch(0.25 0 0);
+        --sidebar-accent-foreground: oklch(0.92 0 0);
+        --sidebar-border: oklch(1 0 0 / 0.08);
+        --sidebar-ring: oklch(0.70 0.14 235);
+        --chart-1: oklch(0.7 0 0);
+        --chart-2: oklch(0.6 0 0);
+        --chart-3: oklch(0.5 0 0);
+        --chart-4: oklch(0.4 0 0);
+        --chart-5: oklch(0.3 0 0);
+    }
+}
+
+/* Accent: cyan */
+:root[data-accent="cyan"] {
+    --primary: #0891b2;
+    --ring: #06b6d4;
+    --sidebar-primary: #0891b2;
+    --sidebar-ring: #06b6d4;
+}
+@supports (color: oklch(0 0 0)) {
+    :root[data-accent="cyan"] {
+        --primary: oklch(0.62 0.13 205);
+        --ring: oklch(0.66 0.12 205);
+        --sidebar-primary: oklch(0.62 0.13 205);
+        --sidebar-ring: oklch(0.66 0.12 205);
+    }
+}
+
+:root[data-accent="emerald"] {
+    --primary: #059669;
+    --ring: #10b981;
+    --sidebar-primary: #059669;
+    --sidebar-ring: #10b981;
+}
+@supports (color: oklch(0 0 0)) {
+    :root[data-accent="emerald"] {
+        --primary: oklch(0.58 0.14 160);
+        --ring: oklch(0.62 0.13 160);
+        --sidebar-primary: oklch(0.58 0.14 160);
+        --sidebar-ring: oklch(0.62 0.13 160);
+    }
+}
+
+:root[data-accent="violet"] {
+    --primary: #7c3aed;
+    --ring: #8b5cf6;
+    --sidebar-primary: #7c3aed;
+    --sidebar-ring: #8b5cf6;
+}
+@supports (color: oklch(0 0 0)) {
+    :root[data-accent="violet"] {
+        --primary: oklch(0.56 0.16 285);
+        --ring: oklch(0.62 0.14 285);
+        --sidebar-primary: oklch(0.56 0.16 285);
+        --sidebar-ring: oklch(0.62 0.14 285);
+    }
+}
+
+:root[data-accent="rose"] {
+    --primary: #e11d48;
+    --ring: #fb7185;
+    --sidebar-primary: #e11d48;
+    --sidebar-ring: #fb7185;
+}
+@supports (color: oklch(0 0 0)) {
+    :root[data-accent="rose"] {
+        --primary: oklch(0.58 0.17 15);
+        --ring: oklch(0.64 0.15 15);
+        --sidebar-primary: oklch(0.58 0.17 15);
+        --sidebar-ring: oklch(0.64 0.15 15);
+    }
+}
+
+:root[data-accent="amber"] {
+    --primary: #d97706;
+    --ring: #f59e0b;
+    --sidebar-primary: #d97706;
+    --sidebar-ring: #f59e0b;
+}
+@supports (color: oklch(0 0 0)) {
+    :root[data-accent="amber"] {
+        --primary: oklch(0.64 0.15 70);
+        --ring: oklch(0.68 0.14 70);
+        --sidebar-primary: oklch(0.64 0.15 70);
+        --sidebar-ring: oklch(0.68 0.14 70);
+    }
+}
+
+/* Dark accent variants */
+.dark[data-accent="cyan"] {
+    --primary: #22d3ee;
+    --ring: #22d3ee;
+    --sidebar-primary: #22d3ee;
+    --sidebar-ring: #22d3ee;
+}
+@supports (color: oklch(0 0 0)) {
+    .dark[data-accent="cyan"] {
+        --primary: oklch(0.72 0.12 205);
+        --ring: oklch(0.72 0.12 205);
+        --sidebar-primary: oklch(0.72 0.12 205);
+        --sidebar-ring: oklch(0.72 0.12 205);
+    }
+}
+
+.dark[data-accent="emerald"] {
+    --primary: #34d399;
+    --ring: #34d399;
+    --sidebar-primary: #34d399;
+    --sidebar-ring: #34d399;
+}
+@supports (color: oklch(0 0 0)) {
+    .dark[data-accent="emerald"] {
+        --primary: oklch(0.70 0.13 160);
+        --ring: oklch(0.70 0.13 160);
+        --sidebar-primary: oklch(0.70 0.13 160);
+        --sidebar-ring: oklch(0.70 0.13 160);
+    }
+}
+
+.dark[data-accent="violet"] {
+    --primary: #a78bfa;
+    --ring: #a78bfa;
+    --sidebar-primary: #a78bfa;
+    --sidebar-ring: #a78bfa;
+}
+@supports (color: oklch(0 0 0)) {
+    .dark[data-accent="violet"] {
+        --primary: oklch(0.72 0.13 285);
+        --ring: oklch(0.72 0.13 285);
+        --sidebar-primary: oklch(0.72 0.13 285);
+        --sidebar-ring: oklch(0.72 0.13 285);
+    }
+}
+
+.dark[data-accent="rose"] {
+    --primary: #fb7185;
+    --ring: #fb7185;
+    --sidebar-primary: #fb7185;
+    --sidebar-ring: #fb7185;
+}
+@supports (color: oklch(0 0 0)) {
+    .dark[data-accent="rose"] {
+        --primary: oklch(0.72 0.14 15);
+        --ring: oklch(0.72 0.14 15);
+        --sidebar-primary: oklch(0.72 0.14 15);
+        --sidebar-ring: oklch(0.72 0.14 15);
+    }
+}
+
+.dark[data-accent="amber"] {
+    --primary: #f59e0b;
+    --ring: #f59e0b;
+    --sidebar-primary: #f59e0b;
+    --sidebar-ring: #f59e0b;
+}
+@supports (color: oklch(0 0 0)) {
+    .dark[data-accent="amber"] {
+        --primary: oklch(0.78 0.13 70);
+        --ring: oklch(0.78 0.13 70);
+        --sidebar-primary: oklch(0.78 0.13 70);
+        --sidebar-ring: oklch(0.78 0.13 70);
+    }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground antialiased;
+    }
+  html {
+    @apply font-sans;
+    }
+
+  /* 文本选区：使用项目 primary 色系，随主题色/深浅模式自动适配 */
+  ::selection {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+  /* Firefox 旧版兼容 */
+  ::-moz-selection {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+}
+
+/* 极光环境背景：为毛玻璃面板提供景深。亮/暗主题各一套。 */
+.app-aurora {
+  background-color: var(--background);
+  /* sRGB 回退 - 无渐变 (Chrome < 111 忽略 oklch 渐变) */
+  background-image: none;
+}
+
+@supports (color: oklch(0 0 0)) {
+  .app-aurora {
+    background-image:
+      radial-gradient(58% 50% at 14% 8%, oklch(0.72 0.15 235 / 0.22), transparent 70%),
+      radial-gradient(50% 45% at 88% 4%, oklch(0.76 0.12 205 / 0.16), transparent 72%),
+      radial-gradient(60% 55% at 82% 96%, oklch(0.78 0.10 170 / 0.12), transparent 72%);
+  }
+}
+
+@supports (color: oklch(0 0 0)) {
+  .dark .app-aurora {
+    background-image:
+      radial-gradient(58% 50% at 12% 8%, oklch(0.58 0.16 235 / 0.34), transparent 70%),
+      radial-gradient(52% 46% at 90% 6%, oklch(0.54 0.13 205 / 0.26), transparent 74%),
+      radial-gradient(60% 58% at 86% 96%, oklch(0.50 0.12 170 / 0.20), transparent 74%);
+  }
+}
+
+/* 玻璃面板高光描边（顶部更亮，呈现层次玻璃质感）。 */
+.glass-edge {
+  /* sRGB 回退 */
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.10),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06),
+    0 8px 24px -12px rgba(0, 0, 0, 0.18);
+}
+.dark .glass-edge {
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.06),
+    0 1px 2px 0 rgba(0, 0, 0, 0.30),
+    0 10px 30px -12px rgba(0, 0, 0, 0.55);
+}
+
+@supports (color: oklch(0 0 0)) {
+  .glass-edge {
+    box-shadow:
+      inset 0 1px 0 0 oklch(1 0 0 / 0.10),
+      0 1px 2px 0 oklch(0 0 0 / 0.06),
+      0 8px 24px -12px oklch(0 0 0 / 0.18);
+  }
+  .dark .glass-edge {
+    box-shadow:
+      inset 0 1px 0 0 oklch(1 0 0 / 0.06),
+      0 1px 2px 0 oklch(0 0 0 / 0.30),
+      0 10px 30px -12px oklch(0 0 0 / 0.55);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ======================================================================
+   Chromium < 111 兼容性：color-mix() 降级
+   Tailwind v4 的 bg-xx/opacity 语法生成的 color-mix() 在旧 WebView 失效，
+   导致所有半透明背景变为全透明。此处为 Alpha 烘焙的 sRGB 值提供回退。
+   只在不支持 color-mix() 的浏览器中激活。
+   ====================================================================== */
+
+/* --- Alpha 变量定义 (light) --- */
+:root {
+  --cm-card-40: rgba(255, 255, 255, 0.40);
+  --cm-card-70: rgba(255, 255, 255, 0.70);
+  --cm-card-75: rgba(255, 255, 255, 0.75);
+  --cm-card-80: rgba(255, 255, 255, 0.80);
+  --cm-card-95: rgba(255, 255, 255, 0.95);
+  --cm-primary-05: rgba(37, 99, 235, 0.05);
+  --cm-primary-10: rgba(37, 99, 235, 0.10);
+  --cm-primary-12: rgba(37, 99, 235, 0.12);
+  --cm-primary-15: rgba(37, 99, 235, 0.15);
+  --cm-primary-30: rgba(37, 99, 235, 0.30);
+  --cm-primary-40: rgba(37, 99, 235, 0.40);
+  --cm-muted-40: rgba(240, 240, 240, 0.40);
+  --cm-muted-50: rgba(240, 240, 240, 0.50);
+  --cm-muted-60: rgba(240, 240, 240, 0.60);
+  --cm-bg-60: rgba(242, 242, 242, 0.60);
+  --cm-input-30: rgba(219, 219, 219, 0.30);
+  --cm-input-50: rgba(219, 219, 219, 0.50);
+  --cm-destructive-10: rgba(220, 38, 38, 0.10);
+  --cm-destructive-20: rgba(220, 38, 38, 0.20);
+  --cm-destructive-30: rgba(220, 38, 38, 0.30);
+  --cm-destructive-40: rgba(220, 38, 38, 0.40);
+  --cm-destructive-60: rgba(220, 38, 38, 0.60);
+  --cm-foreground-10: rgba(46, 46, 46, 0.10);
+  --cm-black-40: rgba(0, 0, 0, 0.40);
+  --cm-border-25: rgba(219, 219, 219, 0.25);
+  --cm-border-35: rgba(219, 219, 219, 0.35);
+  --cm-border-50: rgba(219, 219, 219, 0.50);
+  --cm-border-60: rgba(219, 219, 219, 0.60);
+  --cm-border-70: rgba(219, 219, 219, 0.70);
+}
+
+/* --- Alpha 变量定义 (dark) --- */
+.dark {
+  --cm-card-40: rgba(61, 61, 61, 0.40);
+  --cm-card-70: rgba(61, 61, 61, 0.70);
+  --cm-card-75: rgba(61, 61, 61, 0.75);
+  --cm-card-80: rgba(61, 61, 61, 0.80);
+  --cm-card-95: rgba(61, 61, 61, 0.95);
+  --cm-primary-05: rgba(96, 165, 250, 0.05);
+  --cm-primary-10: rgba(96, 165, 250, 0.10);
+  --cm-primary-12: rgba(96, 165, 250, 0.12);
+  --cm-primary-15: rgba(96, 165, 250, 0.15);
+  --cm-primary-30: rgba(96, 165, 250, 0.30);
+  --cm-primary-40: rgba(96, 165, 250, 0.40);
+  --cm-muted-40: rgba(56, 56, 56, 0.40);
+  --cm-muted-50: rgba(56, 56, 56, 0.50);
+  --cm-muted-60: rgba(56, 56, 56, 0.60);
+  --cm-bg-60: rgba(41, 41, 41, 0.60);
+  --cm-input-30: rgba(255, 255, 255, 0.06);
+  --cm-input-50: rgba(255, 255, 255, 0.08);
+  --cm-destructive-10: rgba(239, 68, 68, 0.10);
+  --cm-destructive-20: rgba(239, 68, 68, 0.20);
+  --cm-destructive-30: rgba(239, 68, 68, 0.30);
+  --cm-destructive-40: rgba(239, 68, 68, 0.40);
+  --cm-destructive-60: rgba(239, 68, 68, 0.60);
+  --cm-foreground-10: rgba(235, 235, 235, 0.10);
+  --cm-black-40: rgba(0, 0, 0, 0.40);
+  --cm-border-25: rgba(255, 255, 255, 0.04);
+  --cm-border-35: rgba(255, 255, 255, 0.06);
+  --cm-border-50: rgba(255, 255, 255, 0.08);
+  --cm-border-60: rgba(255, 255, 255, 0.10);
+  --cm-border-70: rgba(255, 255, 255, 0.12);
+}
+
+/* --- color-mix() 降级覆盖 (仅 Chrome < 111 激活) --- */
+@supports not (background-color: color-mix(in srgb, red 50%, blue)) {
+
+  /* card */
+  .bg-card\/40  { background-color: var(--cm-card-40) !important; }
+  .bg-card\/70  { background-color: var(--cm-card-70) !important; }
+  .bg-card\/75  { background-color: var(--cm-card-75) !important; }
+  .bg-card\/80  { background-color: var(--cm-card-80) !important; }
+  .bg-card\/95  { background-color: var(--cm-card-95) !important; }
+  .hover\:bg-card\/95:hover { background-color: var(--cm-card-95) !important; }
+
+  /* primary */
+  .bg-primary\/5    { background-color: var(--cm-primary-05) !important; }
+  .bg-primary\/10   { background-color: var(--cm-primary-10) !important; }
+  .bg-primary\/\[0\.02\] { background-color: rgba(37, 99, 235, 0.02) !important; }
+  .bg-primary\/\[0\.03\] { background-color: rgba(37, 99, 235, 0.03) !important; }
+  .bg-primary\/\[0\.04\] { background-color: rgba(37, 99, 235, 0.04) !important; }
+  .bg-primary\/\[0\.06\] { background-color: rgba(37, 99, 235, 0.06) !important; }
+  .bg-primary\/\[0\.12\] { background-color: var(--cm-primary-12) !important; }
+  .hover\:bg-primary\/5:hover   { background-color: var(--cm-primary-05) !important; }
+  .hover\:bg-primary\/10:hover  { background-color: var(--cm-primary-10) !important; }
+  .md\:bg-primary\/\[0\.12\]    { background-color: var(--cm-primary-12) !important; }
+  .dark .dark\:bg-primary\/10   { background-color: var(--cm-primary-10) !important; }
+
+  /* muted */
+  .bg-muted\/30  { background-color: var(--cm-muted-30, rgba(240,240,240,0.30)) !important; }
+  .bg-muted\/40  { background-color: var(--cm-muted-40) !important; }
+  .bg-muted\/50  { background-color: var(--cm-muted-50) !important; }
+  .bg-muted\/60  { background-color: var(--cm-muted-60) !important; }
+  .hover\:bg-muted\/40:hover  { background-color: var(--cm-muted-40) !important; }
+  .hover\:bg-muted\/50:hover  { background-color: var(--cm-muted-50) !important; }
+  .hover\:bg-muted\/60:hover  { background-color: var(--cm-muted-60) !important; }
+  .active\:bg-muted\/60:active { background-color: var(--cm-muted-60) !important; }
+  :is(.dark .dark\:hover\:bg-muted\/50:hover) { background-color: var(--cm-muted-50) !important; }
+  .md\:hover\:bg-muted\/60:hover { background-color: var(--cm-muted-60) !important; }
+
+  /* background */
+  .bg-background\/60 { background-color: var(--cm-bg-60) !important; }
+
+  /* input (dark variants) */
+  .dark\:bg-input\/30 { background-color: var(--cm-input-30) !important; }
+  .dark\:bg-input\/50 { background-color: var(--cm-input-50) !important; }
+
+  /* destructive */
+  .bg-destructive\/10  { background-color: var(--cm-destructive-10) !important; }
+  .bg-destructive\/20  { background-color: var(--cm-destructive-20) !important; }
+  .hover\:bg-destructive\/10:hover { background-color: var(--cm-destructive-10) !important; }
+  .hover\:bg-destructive\/20:hover { background-color: var(--cm-destructive-20) !important; }
+  .dark\:bg-destructive\/20 { background-color: var(--cm-destructive-20) !important; }
+  .dark\:bg-destructive\/30 { background-color: var(--cm-destructive-30) !important; }
+  .dark\:hover\:bg-destructive\/30:hover { background-color: var(--cm-destructive-30) !important; }
+
+  /* black */
+  .bg-black\/40 { background-color: var(--cm-black-40) !important; }
+
+  /* borders */
+  .border-border\/25  { border-color: var(--cm-border-25) !important; }
+  .border-border\/35  { border-color: var(--cm-border-35) !important; }
+  .border-border\/50  { border-color: var(--cm-border-50) !important; }
+  .border-border\/60  { border-color: var(--cm-border-60) !important; }
+  .border-border\/70  { border-color: var(--cm-border-70) !important; }
+  .border-primary\/15 { border-color: var(--cm-primary-15) !important; }
+  .border-primary\/40 { border-color: var(--cm-primary-40) !important; }
+  .border-destructive\/40 { border-color: var(--cm-destructive-40) !important; }
+  .border-destructive\/60 { border-color: var(--cm-destructive-60) !important; }
+
+  /* ring */
+  .ring-foreground\/10  { --tw-ring-color: var(--cm-foreground-10) !important; }
+  .ring-primary\/30     { --tw-ring-color: var(--cm-primary-30) !important; }
+  .ring-destructive\/20 { --tw-ring-color: var(--cm-destructive-20) !important; }
+  .focus-within\:ring-destructive\/20:focus-within { --tw-ring-color: var(--cm-destructive-20) !important; }
+  :is(.dark .dark\:focus-visible\:ring-destructive\/40:focus-visible) { --tw-ring-color: var(--cm-destructive-40) !important; }
+  .focus\:ring-primary\/30:focus         { --tw-ring-color: var(--cm-primary-30) !important; }
+  .focus\:ring-destructive\/20:focus     { --tw-ring-color: var(--cm-destructive-20) !important; }
+  .focus-visible\:ring-destructive\/20:focus-visible { --tw-ring-color: var(--cm-destructive-20) !important; }
+
+  /* outline */
+  .outline-ring\/50 { outline-color: var(--cm-ring-50, rgba(59,130,246,0.50)) !important; }
+
+  /* ── Tailwind 内置调色板降级 (bg/text/border 颜色类也用 oklch) ── */
+
+  /* red */
+  .bg-red-500\/15    { background-color: rgba(239, 68, 68, 0.15) !important; }
+  .text-red-400      { color: #f87171 !important; }
+  .border-red-500\/30 { border-color: rgba(239, 68, 68, 0.30) !important; }
+
+  /* amber */
+  .bg-amber-500\/15    { background-color: rgba(245, 158, 11, 0.15) !important; }
+  .text-amber-400      { color: #fbbf24 !important; }
+  .text-amber-600      { color: #d97706 !important; }
+  .border-amber-500\/30 { border-color: rgba(245, 158, 11, 0.30) !important; }
+  .dark .dark\:text-amber-300 { color: #fcd34d !important; }
+
+  /* emerald */
+  .bg-emerald-500\/15    { background-color: rgba(16, 185, 129, 0.15) !important; }
+  .text-emerald-400      { color: #34d399 !important; }
+  .border-emerald-500\/30 { border-color: rgba(16, 185, 129, 0.30) !important; }
+}

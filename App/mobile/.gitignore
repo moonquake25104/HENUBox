@@ -1,0 +1,9 @@
+# 壳工程自身的依赖与产物
+node_modules/
+dist-copy/
+android/app/build/
+android/.gradle/
+android/local.properties
+*.keystore
+*.jks
+keystore.properties

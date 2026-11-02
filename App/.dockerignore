@@ -1,0 +1,17 @@
+.git
+.gitignore
+node_modules
+dist
+dist-ssr
+src-tauri
+.env
+.env.*
+!.env.example
+.trellis
+.agents
+.claude
+.codex
+.omo
+deploy/certs
+*.log
+**/bin

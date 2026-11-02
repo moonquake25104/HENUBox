@@ -1,0 +1,68 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+
+# Go backend build output
+server/bin/
+*.local
+_ui_temp_figs/
+_TEMP/
+.vite-hmr.pid
+.reasonix
+reasonix.toml
+.env
+.env.*
+!.env.example
+!src-tauri/.env.example
+
+# Agent skill directories (tool-managed, not source)
+.agents/
+.claude/
+.codex/
+
+# Agent tool state (local-only, not source)
+.omo/
+
+# Personal agent config (machine-local, not source)
+CLAUDE.md
+CLAUDE_PROMPT_TEMPLATES.md
+
+# Trellis local-state boundary is maintained in ".trellis/.gitignore"
+
+# Android signing keys
+*.jks
+
+# Code signing private keys
+*.pfx
+*.p12
+*.pem
+*.key
+*.keystore
+
+# Local signing certificates
+*.cer
+*.crt
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Deployment TLS certificates (user-provided, never committed)
+deploy/certs/*
+!deploy/certs/.gitkeep
