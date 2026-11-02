@@ -13,6 +13,7 @@ import { CourseReminderSettings } from "./CourseReminderSettings"
 import { GuideCacheSettings } from "./CampusGuidePage"
 import { AboutBox } from "./BoxSurprises"
 import { AboutLegal } from "./AboutLegal"
+import { UpdateChecker } from "./UpdateChecker"
 import { useTimetableDays } from "@/lib/mobile/timetable-days"
 import "./course-reminders.css"
 
@@ -46,7 +47,7 @@ export function MeSettings(p: Props) {
       <button className="xp-account" aria-label="查看学校与账号" onClick={() => setView("school")}><span className="xp-account-icon"><CloudDownload size={23} /></span><span><strong>河南大学</strong><small>{status} · {semesterLabel(p.semester)}</small></span><ChevronRight size={17} /></button>
       <Group title="学习与课表"><Row icon={<ShieldCheck size={19} />} title="学校与账号" detail="本人授权 · 学校连接与更新" value={status} action={() => setView("school")} /><Row icon={<CalendarDays size={19} />} title="课表与作息" detail="学期、校区与上课时间" value={semesterLabel(p.semester)} action={() => setView("timetable")} /></Group>
       <Group title="个人偏好"><Row icon={<Sparkles size={19} />} title="通用" detail="界面风格 · 浅深色 · 配色 · 首页背景" value={material} action={() => setView("general")} /><Row icon={<Database size={19} />} title="本机数据" detail="保存状态与重新读取" value={`${p.courseCount} 个安排`} action={() => setView("data")} /></Group>
-      <Group title="关于"><Row icon={<Info size={19} />} title="关于HENUBox" detail="版本与使用说明" value="0.1.0" action={() => setView("about")} /></Group>
+      <Group title="关于"><Row icon={<Info size={19} />} title="关于HENUBox" detail="版本与使用说明" value={`v${__APP_VERSION__}`} action={() => setView("about")} /></Group>
       <p className="xp-footer">好好上课，也好好生活。</p>
     </>}
     {view === "school" && <>
@@ -72,6 +73,6 @@ export function MeSettings(p: Props) {
       <Group title="读取本机数据"><button className="xp-row" aria-label="重新读取本机课表" disabled={rereading} onClick={() => void reload()}><span className="xp-row-icon"><RefreshCw size={19} className={rereading ? "animate-spin" : undefined} /></span><span className="xp-row-copy"><strong>{rereading ? "正在读取…" : "重新读取本机课表"}</strong><small>从手机读取已保存的课表</small></span><ChevronRight size={16} /></button></Group>
       {readDone && <p className="xp-caption" role="status">本机课表已重新读取。</p>}{readError && <p className="xp-error" role="alert">{readError}</p>}<div className="xp-note"><Smartphone size={18} /><p>离线时也能查看已保存的课表、待办与专注记录。学校的最新课表需要在联网后检查更新。</p></div>
     </>}
-    {view === "about" && <><div className="xp-about-brand"><span className="xp-brand"><BookOpen size={30} /></span><AboutBox /><p>河小盒 · 好好上课，也好好生活。</p><small>版本 0.1.0</small></div><AboutLegal /></>}
+    {view === "about" && <><div className="xp-about-brand"><span className="xp-brand"><BookOpen size={30} /></span><AboutBox /><p>河小盒 · 好好上课，也好好生活。</p><small>版本 {__APP_VERSION__}</small></div><UpdateChecker /><AboutLegal /></>}
   </section>
 }

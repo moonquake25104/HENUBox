@@ -32,6 +32,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(XiqueBackdropPlugin.class);
         registerPlugin(XiqueCourseRemindersPlugin.class);
         registerPlugin(XiqueGuidePlugin.class);
+        registerPlugin(XiqueUpdatePlugin.class);
         super.onCreate(state);
         restoreAppAppearance();
     }
