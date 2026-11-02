@@ -10,13 +10,26 @@
 
 大学里的信息常常散落在教务系统、图书馆、邮箱和一堆网页里。河小盒想做的事情很简单：把每天真正会用到的部分收在一起，让课表、待办和校园服务触手可及，同时尽量把数据留在你自己的手机上。
 
+## 界面预览
+
+<p align="center">
+  <img src="docs/images/home.jpg" width="250" alt="首页：今日课程与待办">
+  <img src="docs/images/timetable.jpg" width="250" alt="课表：整周课程与作息">
+</p>
+<p align="center"><sub>首页 · 课表</sub></p>
+<p align="center">
+  <img src="docs/images/campus.jpg" width="250" alt="Campus 校园工具">
+  <img src="docs/images/appearance.jpg" width="250" alt="三种外观与五种配色">
+</p>
+<p align="center"><sub>Campus · 三种外观与五种配色</sub></p>
+
 ## 功能
 
 ### 课表：一次保存，整学期离线看
 
 - 首次从教务保存后，断网也能查看整学期课表
 - 支持 18 周、5 天/7 天显示、校区作息和个人编辑
-- 课程可以单独改颜色、时间、地点，冲突和临时调整都能自己安排
+- 课程可以单独改颜色、时间、地点，临时调整也能自己安排
 - 首页直接显示今天要上的课和下一节安排
 
 ### 教务：本人登录，按需更新
