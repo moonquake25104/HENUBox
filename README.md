@@ -1,73 +1,95 @@
-# HENUBox
+# HENUBox 河小盒
 
-河小盒：面向河南大学校园生活的 Android 工具箱。课表首次保存到手机后，可以离线查看整学期；联网时可由用户登录教务查询课表更新与空闲教室。
+> 把课表、校园服务和日常小事，装进一个盒子里。
 
-这是学习交流项目，非学校官方应用，不含广告。学校网页与服务可能变化，信息以官方系统为准。当前以修复问题、完善体验和发布维护为主。公开仓库地址：**https://github.com/moonquake25104/HENUBox**。
+面向河南大学校园生活的 Android 工具箱。非学校官方应用，免费、无广告。
 
-## 仓库概览
+[下载最新版](https://github.com/moonquake25104/HENUBox/releases/latest) · [问题反馈](https://github.com/moonquake25104/HENUBox/issues) · [参与贡献](CONTRIBUTING.md)
 
-| 模块 | 路径 | 用途 | 说明 |
-|---|---|---|---|
-| 界面 | App/src | 首页、课表、校园工具、设置和三种外观 | [界面说明](App/README.md) |
-| Android | App/mobile/android | 本机存储、授权、通知、专注、嵌入浏览器与导航 | [Android 说明](App/mobile/README.md) |
-| Go | App/server | 纯 HTML 解析、移动绑定及可选网页后端 | [Go 说明](App/server/README.md) |
+## 为什么是河小盒
 
-课表支持 18 周、5/7 天显示、校区作息和个人编辑；校园工具包含空闲教室、图书馆与邮箱官方网页、校园指南、专注和待办。电费查询仍为预留入口。“我的 → 关于HENUBox”可手动检查 GitHub Releases 最新版本；只显示版本与更新说明并在浏览器打开，不自动下载或安装。
+大学里的信息常常散落在教务系统、图书馆、邮箱和一堆网页里。河小盒想做的事情很简单：把每天真正会用到的部分收在一起，让课表、待办和校园服务触手可及，同时尽量把数据留在你自己的手机上。
 
-## 快速开始
+## 功能
 
-需要 Windows PowerShell、Node.js 22.12+、Go 1.26+、JDK 21、Android SDK 35、Build Tools 36.0.0 和 NDK 27.1.12297006。先在当前终端设置 JAVA_HOME 和 ANDROID_HOME（可选 ANDROID_NDK_HOME），指向自己的安装目录。
+### 课表：一次保存，整学期离线看
 
-1. 下载源码并在根目录打开 PowerShell。
-2. 执行下列命令，安装两个模块各自的依赖并构建：
+- 首次从教务保存后，断网也能查看整学期课表
+- 支持 18 周、5 天/7 天显示、校区作息和个人编辑
+- 课程可以单独改颜色、时间、地点，冲突和临时调整都能自己安排
+- 首页直接显示今天要上的课和下一节安排
 
-~~~powershell
+### 教务：本人登录，按需更新
+
+- 由你在学校官方页面完成登录，App 不要求你把密码交给开发者
+- 登录后可更新课表、查询空闲教室
+- 教务会话使用 Android Keystore 加密保存在本机
+
+### 校园工具：少开几个网页
+
+- 空闲教室查询
+- 图书馆、学校邮箱等官方入口
+- 校园指南：校历、校区地图、常用电话、校车、校园信息
+- 专注计时与待办清单
+
+### 专注与待办
+
+- 番茄钟、正计时、白噪音和专注记录
+- 待办支持今天、重要、逾期等视图
+- 通知、提醒和勿扰权限按需申请，不需要时不会打扰
+
+### 三种外观，五种配色
+
+- **经典**：干净、克制，适合日常
+- **液态玻璃**：半透明层次和柔和光影
+- **安卓原生**：更贴近系统组件的观感
+- 配色：原色、松间青、雾海蓝、云藤紫、暖杏
+- 支持浅色、深色和跟随系统
+
+### 数据留在本机
+
+课表、待办、专注记录和自定义背景主要保存在设备上；没有开发者广告 SDK，也不会把这些记录主动上传。图书馆、邮箱等外部网页仍适用对应服务方的规则。
+
+## 下载与安装
+
+- 最新版本：[GitHub Releases](https://github.com/moonquake25104/HENUBox/releases)
+- 系统要求：Android 9 及以上，arm64-v8a
+- 覆盖安装即可保留本机课表、待办、专注记录和自定义背景
+- 这是学习交流项目，不提供学校账号代理，也不代表学校官方
+
+## 一起完善河小盒
+
+河小盒目前由个人维护，功能范围保持稳定，优先修复问题和打磨体验。但一个校园工具想真正好用，需要更多使用它的人一起提意见。
+
+欢迎从这些方向参与：
+
+- **反馈问题**：说明机型、系统版本、复现步骤和预期结果；请先去掉姓名、学号、密码、Cookie 和个人课表
+- **适配机型**：不同厂商的通知、后台、勿扰和权限策略差异很大，欢迎帮忙测试
+- **改进解析**：学校页面和教务系统会变化，遇到解析失败可以提供脱敏后的结构说明
+- **界面与交互**：三种外观、配色、排版、动效和无障碍都可以继续打磨
+- **文档与测试**：补充构建说明、隐私说明、回归用例，或者帮忙校对文案
+- **分享给同学**：如果它确实帮你省了一点时间，欢迎推荐给需要的人
+
+提交代码前请先阅读 [贡献说明](CONTRIBUTING.md)；安全问题请按 [安全反馈](SECURITY.md) 私下联系，不要在公开 Issue 里贴凭据或个人信息。
+
+## 开发与构建
+
+界面使用 React + TypeScript + Vite，Android 壳使用 Capacitor + Java/Kotlin，课表解析使用 Go。具体工具版本、构建命令和测试入口见 [开发说明](docs/BUILDING.md)。
+
+```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/build-android.ps1 -InstallDependencies
-~~~
+```
 
-3. 安装 App/mobile/android/app/build/outputs/apk/debug/app-debug.apk，再由本人完成学校登录并选择校区。重新签名构建不能覆盖其他签名的安装包，勿直接卸载仍有个人数据的旧应用。
+构建产物在 `App/mobile/android/app/build/outputs/apk/`。源码结构、模块说明和发布流程分别在 `App/`、`docs/` 和 [发布说明](docs/PUBLISHING.md) 中。
 
-首次构建需要下载公开依赖，具体工具版本、独立测试和可选网页开发见 [开发说明](docs/BUILDING.md)。
+## 隐私与安全
 
-## 常用命令
+课表、待办、专注记录和自选媒体主要保存在设备；学校登录由用户在学校页面完成，教务会话由 Android Keystore 保护。通知、提醒、勿扰等权限按需申请。详见 [隐私说明](docs/PRIVACY.md) 与应用内“我的 → 关于HENUBox”。
 
-~~~powershell
-# 单独运行纯解析测试
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/test-parser.ps1
-# 重建移动界面（先安装 App 和 App/mobile 依赖）
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/build-mobile-web.ps1
-# 重建 Go 解析 AAR
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/build-parser.ps1
-~~~
-
-命令来源：scripts 中的 PowerShell 入口及各模块 package.json、go.mod；工具配置只在当前进程生效。
-
-界面代码静态检查可在 App 目录运行 npm run lint（来源：App/package.json）。这与 TypeScript 构建检查是不同的检查入口。
-
-## 目录结构
-
-| 路径 | 内容 |
-|---|---|
-| App/ | 当前界面、Android、解析器与可选后端源码 |
-| scripts/ | 可移植构建和测试入口 |
-| docs/ | 构建、隐私、发布与贡献说明 |
-| third_party/ | 第三方许可原文 |
-
-依赖、临时文件与缓存留在 .local 或模块自己的 node_modules，构建资源留在 runtime/build；均被 Git 忽略，不包含私人密钥、账号、课表或历史运行目录。
-
-## 命名说明
-
-对外品牌统一为 HENUBox。Android `applicationId`（`com.xique.assistant`）、Go 模块路径（`kairos/server`）、npm 包名及部分历史组件名沿用早期内部标识；首次公开发布后不再变更 `applicationId`，以免影响已安装用户的覆盖升级。
-
-## 隐私与使用说明
-
-课表、待办、专注记录和自选媒体主要保存在设备；学校会话由 Android Keystore 保护，学校登录由用户在对应网页完成。图书馆、邮箱、全景等外部页面适用其各自政策。通知、提醒、勿扰等权限按需申请。详见 [隐私说明](docs/PRIVACY.md) 与应用内“我的 → 关于”。不承诺不存在漏洞，请勿在问题反馈中附带凭据或个人课表。
+不承诺不存在漏洞。反馈问题时请勿附带凭据、Cookie、学号、个人课表或未脱敏截图。
 
 ## 许可与致谢
 
-代码沿用上游 [MIT 许可证](LICENSE)，保留 Kairos 原始版权，并注明 HENUBox 维护者 [moonquake25104](https://github.com/moonquake25104) 的版权。第三方源码、依赖与素材的许可分别列在 [第三方致谢](THIRD_PARTY_NOTICES.md)，并可在应用内离线查看。公开副本使用中性占位插画和盒子图标，避免携带来源未确认的私人素材。
+代码沿用上游 [MIT 许可证](LICENSE)，保留 Kairos 原始版权，并注明 HENUBox 维护者 [moonquake25104](https://github.com/moonquake25104) 的版权。第三方源码、依赖与素材的许可列在 [第三方致谢](THIRD_PARTY_NOTICES.md)，并可在应用内离线查看。
 
-## 维护与贡献
-
-提交改动前阅读 [贡献说明](CONTRIBUTING.md)，安全问题见 [安全反馈](SECURITY.md)，首次发布和上传步骤见 [发布说明](docs/PUBLISHING.md)。下载与反馈以 GitHub 仓库页面为准。修改功能、权限、数据存储、依赖、构建脚本或许可时，应同步更新 README、开发说明和应用内关于内容。
-
+感谢 Kairos、React、Capacitor、Radix UI、Lucide、AndroidX/Compose、Kotlin、Go、AndroidLiquidGlass/Backdrop、字体与音频作者，以及参与测试和分享建议的朋友。
