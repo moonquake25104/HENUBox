@@ -17,6 +17,8 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.Proxy;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
@@ -68,6 +70,59 @@ public final class XiqueUpdatePlugin extends Plugin {
             // Fall through to a safe display value; the update check still works.
         }
         return "0.0.0";
+    }
+
+    private static boolean safeSegment(String value) {
+        return value != null
+                && !value.equals(".")
+                && !value.equals("..")
+                && value.matches("[A-Za-z0-9._-]+");
+    }
+
+    /**
+     * Parse and canonicalise a GitHub release URL. Returning a string built
+     * from the normalised path means dot segments and encoded separators can
+     * never survive into the Intent.
+     */
+    private static String safeReleaseUrl(String value) {
+        if (value == null || value.isEmpty() || value.length() > 2048 || value.indexOf('\\') >= 0) {
+            return null;
+        }
+        URI uri;
+        try {
+            uri = new URI(value);
+        } catch (URISyntaxException e) {
+            return null;
+        }
+        if (!"https".equalsIgnoreCase(uri.getScheme())
+                || !"github.com".equalsIgnoreCase(uri.getHost())
+                || uri.getRawUserInfo() != null
+                || (uri.getPort() != -1 && uri.getPort() != 443)
+                || uri.getRawQuery() != null
+                || uri.getRawFragment() != null) {
+            return null;
+        }
+        String rawPath = uri.getRawPath();
+        if (rawPath == null || rawPath.indexOf('%') >= 0 || rawPath.indexOf('\\') >= 0) {
+            return null;
+        }
+        String path = uri.normalize().getPath();
+        if (path == null) return null;
+        String[] parts = path.split("/");
+        if (parts.length < 4 || !"moonquake25104".equals(parts[1]) || !"HENUBox".equals(parts[2])
+                || !"releases".equals(parts[3])) {
+            return null;
+        }
+        if (parts.length == 4) return RELEASES;
+        if (parts.length == 5 && "latest".equals(parts[4])) return RELEASES + "/latest";
+        if (parts.length == 6 && "tag".equals(parts[4]) && safeSegment(parts[5])) {
+            return RELEASES + "/tag/" + parts[5];
+        }
+        if (parts.length == 7 && "download".equals(parts[4])
+                && safeSegment(parts[5]) && safeSegment(parts[6])) {
+            return RELEASES + "/download/" + parts[5] + "/" + parts[6];
+        }
+        return null;
     }
 
     private static String readBounded(InputStream input) throws Exception {
@@ -122,8 +177,8 @@ public final class XiqueUpdatePlugin extends Plugin {
                 }
                 String tag = release.optString("tag_name", "").trim();
                 if (tag.isEmpty()) throw new Failure("INVALID_RELEASE");
-                String releaseUrl = release.optString("html_url", "");
-                if (!releaseUrl.startsWith(RELEASES + "/")) releaseUrl = RELEASES + "/latest";
+                String releaseUrl = safeReleaseUrl(release.optString("html_url", ""));
+                if (releaseUrl == null) releaseUrl = RELEASES + "/latest";
                 String apkUrl = null;
                 JSONArray assets = release.optJSONArray("assets");
                 if (assets != null) {
@@ -131,8 +186,9 @@ public final class XiqueUpdatePlugin extends Plugin {
                         JSONObject asset = assets.optJSONObject(i);
                         if (asset == null) continue;
                         String name = asset.optString("name", "");
-                        String url = asset.optString("browser_download_url", "");
+                        String url = safeReleaseUrl(asset.optString("browser_download_url", ""));
                         if (name.toLowerCase(Locale.ROOT).endsWith(".apk")
+                                && url != null
                                 && url.startsWith(RELEASES + "/download/")) {
                             apkUrl = url;
                             break;
@@ -167,11 +223,8 @@ public final class XiqueUpdatePlugin extends Plugin {
             return;
         }
         try {
-            String url = BridgeArgs.text(BridgeArgs.exact(call, "url"), "url", 2048);
-            if (!url.equals(RELEASES) && !url.equals(RELEASES + "/latest")
-                    && !url.startsWith(RELEASES + "/")) {
-                throw new IllegalArgumentException();
-            }
+            String url = safeReleaseUrl(BridgeArgs.text(BridgeArgs.exact(call, "url"), "url", 2048));
+            if (url == null) throw new IllegalArgumentException();
             getActivity().runOnUiThread(() -> {
                 try {
                     getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));

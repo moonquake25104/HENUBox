@@ -66,10 +66,62 @@ export function isNewerVersion(latest: string, current: string): boolean {
   return false
 }
 
+const SAFE_SEGMENT = /^[A-Za-z0-9._-]+$/
+
 export function safeReleaseUrl(value: string | null | undefined): string {
-  if (typeof value !== "string" || value.length > 2048) return LATEST_RELEASE_URL
-  if (value === RELEASES_URL || value === LATEST_RELEASE_URL) return value
-  return value.startsWith(`${RELEASES_URL}/`) ? value : LATEST_RELEASE_URL
+  if (
+    typeof value !== "string" ||
+    value.length === 0 ||
+    value.length > 2048 ||
+    value.includes("\\")
+  ) {
+    return LATEST_RELEASE_URL
+  }
+  let url: URL
+  try {
+    url = new URL(value)
+  } catch {
+    return LATEST_RELEASE_URL
+  }
+  if (
+    url.protocol !== "https:" ||
+    url.hostname !== "github.com" ||
+    url.port !== "" ||
+    url.username !== "" ||
+    url.password !== "" ||
+    url.search !== "" ||
+    url.hash !== ""
+  ) {
+    return LATEST_RELEASE_URL
+  }
+  // Reject encoded paths outright: GitHub release tags/assets used here are
+  // plain ASCII, and percent-decoding is the easiest way to smuggle `..`.
+  if (url.pathname.includes("%")) return LATEST_RELEASE_URL
+  const parts = url.pathname.split("/").filter(Boolean)
+  if (parts.length < 3 || parts[0] !== "moonquake25104" || parts[1] !== "HENUBox" || parts[2] !== "releases") {
+    return LATEST_RELEASE_URL
+  }
+  const segment = (value: string) => SAFE_SEGMENT.test(value) && value !== "." && value !== ".."
+  if (parts.length === 3) return RELEASES_URL
+  if (parts.length === 4 && parts[3] === "latest") return LATEST_RELEASE_URL
+  if (parts.length === 5 && parts[3] === "tag" && segment(parts[4])) {
+    return `${RELEASES_URL}/tag/${parts[4]}`
+  }
+  if (
+    parts.length === 6 &&
+    parts[3] === "download" &&
+    segment(parts[4]) &&
+    segment(parts[5])
+  ) {
+    return `${RELEASES_URL}/download/${parts[4]}/${parts[5]}`
+  }
+  return LATEST_RELEASE_URL
+}
+
+function safeDownloadUrl(value: string | null): string | null {
+  if (!value) return null
+  const safe = safeReleaseUrl(value)
+  return safe.startsWith(`${RELEASES_URL}/download/`) ? safe : null
 }
 
 function apkFromAssets(value: unknown): string | null {
@@ -79,7 +131,8 @@ function apkFromAssets(value: unknown): string | null {
     const asset = item as Record<string, unknown>
     const name = typeof asset.name === "string" ? asset.name.toLowerCase() : ""
     const url = typeof asset.browser_download_url === "string" ? asset.browser_download_url : ""
-    if (name.endsWith(".apk") && url.startsWith(`${RELEASES_URL}/download/`)) return url
+    const safe = safeReleaseUrl(url)
+    if (name.endsWith(".apk") && safe.startsWith(`${RELEASES_URL}/download/`)) return safe
   }
   return null
 }
@@ -137,7 +190,7 @@ function normalizeRelease(raw: NativeRelease): UpdateResult {
     latestVersion,
     latestTag,
     releaseUrl: safeReleaseUrl(raw.html_url),
-    apkUrl: raw.apk_url && raw.apk_url.startsWith(`${RELEASES_URL}/download/`) ? raw.apk_url : null,
+    apkUrl: safeDownloadUrl(raw.apk_url),
     publishedAt: raw.published_at,
     notes: raw.body.slice(0, 6000),
     updateAvailable: isNewerVersion(latestVersion, currentVersion),

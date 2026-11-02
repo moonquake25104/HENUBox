@@ -33,8 +33,9 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 // The parser AAR is a build artifact produced by scripts/build-parser.ps1
-// (gomobile bind, arm64). Kept in the module so the path is explicit.
+// (gomobile bind, arm64). It is compile-only here because a library module
+// cannot publish a local .aar inside its own AAR; the app module packages it.
 dependencies {
-    implementation files('libs/henuparse.aar')
+    compileOnly files('libs/henuparse.aar')
     implementation 'androidx.annotation:annotation:1.9.1'
 }
