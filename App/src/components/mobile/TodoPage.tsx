@@ -8,7 +8,7 @@ import { PlanDatePicker } from "./PlanDatePicker"
 import { FinishBox } from "./BoxSurprises"
 import { useContentTransition } from "@/hooks/use-content-transition"
 
-function TodoRow({ item, today, busy, toggle, edit }: { item: TodoItem; today: string; busy: boolean; toggle: () => void; edit: () => void }) {
+export function TodoRow({ item, today, busy, toggle, edit }: { item: TodoItem; today: string; busy: boolean; toggle: () => void; edit: () => void }) {
   const date = todoDateLabel(item, today)
   return <article className={`xt-row${item.completed ? " is-completed" : ""}`}>
     <button className="xt-check" role="checkbox" aria-checked={item.completed} aria-label={`${item.completed ? "重新打开" : "完成"}：${item.title}`} disabled={busy} onClick={toggle}>{item.completed ? <Check size={19} /> : <Circle size={21} />}</button>
@@ -47,8 +47,8 @@ export function TodoPage({ todos, close, createRequest }: { todos: TodoControlle
   </section>
 }
 
-function TodoEditor({ value, id, todos, close }: { value: TodoItem | null; id: string; todos: TodoController; close: () => void }) {
-  const [draft, setDraft] = useState<TodoDraft>({ title: value?.title ?? "", note: value?.note ?? "", due_date: value?.due_date ?? "", important: value?.important ?? false }), [deleting, setDeleting] = useState(false)
+export function TodoEditor({ value, id, todos, close, initialDate = "" }: { value: TodoItem | null; id: string; todos: TodoController; close: () => void; initialDate?: string }) {
+  const [draft, setDraft] = useState<TodoDraft>({ title: value?.title ?? "", note: value?.note ?? "", due_date: value?.due_date ?? initialDate, important: value?.important ?? false }), [deleting, setDeleting] = useState(false)
   const titleLength = [...draft.title.trim()].length, noteLength = [...draft.note].length, valid = titleLength > 0 && titleLength <= 120 && noteLength <= 2000 && (!draft.due_date || draft.due_date >= "2000-01-01" && draft.due_date <= "2100-12-31")
   return <Modal open title={value ? "编辑待办" : "添加待办"} description="只保存在手机，随时记下、随时查看。" className="xt-editor" onOpenChange={open => { if (!open && !todos.busy) close() }}><form onSubmit={e => { e.preventDefault(); const fields = new FormData(e.currentTarget); const liveDraft = { ...draft, title: String(fields.get("title") ?? ""), note: String(fields.get("note") ?? "") }; if (valid) void todos.save(id, value, liveDraft).then(ok => { if (ok) close() }) }}>
     <label>事项内容<input aria-label="事项内容" defaultValue={value?.title ?? ""} name="title" maxLength={240} placeholder="例如：整理本周笔记" onInput={e => { const title = e.currentTarget.value; setDraft(d => ({ ...d, title })) }} disabled={todos.busy} /></label><small className={titleLength > 120 ? "xt-error" : "xt-counter"}>{titleLength}/120</small>

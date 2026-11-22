@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import {
   ArrowRight,
   CalendarDays,
+  CalendarRange,
   ChevronRight,
   Clock3,
   ImagePlus,
@@ -59,6 +60,7 @@ import { HomeVideo } from "./HomeVideo"
 import { useTodos } from "@/hooks/use-todos"
 import { HomeTodos, TodoPage } from "./TodoPage"
 import { CampusGuidePage } from "./CampusGuidePage"
+import { CampusPlannerPage, HomePlanner, type PlannerTab } from "./CampusToolsPage"
 import "./mobile-v2.css"
 import "./mobile-compact.css"
 import "./liquid-glass.css"
@@ -137,10 +139,20 @@ export function MobileApp() {
   const todos = useTodos()
   const [todoOpen, setTodoOpen] = useState(false)
   const [guideOpen, setGuideOpen] = useState(false)
+  const [campusTool, setCampusTool] = useState<{ tab: PlannerTab; date?: string } | null>(null)
   const [todoCreate, setTodoCreate] = useState(0)
-  const openTodos = (create = false) => { setGuideOpen(false); setFocusOpen(false); setSchoolOpen(false); setClassroomOpen(false); setFeature(null); setCourse(null); setEditor(null); setBackgroundOpen(false); setTodoCreate(create ? Date.now() : 0); setTodoOpen(true) }
+  const openTodos = (create = false) => { setCampusTool(null); setGuideOpen(false); setFocusOpen(false); setSchoolOpen(false); setClassroomOpen(false); setFeature(null); setCourse(null); setEditor(null); setBackgroundOpen(false); setTodoCreate(create ? Date.now() : 0); setTodoOpen(true) }
   const [focusOpen, setFocusOpen] = useState(false)
-  useEffect(() => { if (focus.state?.open_requested) queueMicrotask(() => { setGuideOpen(false); setTodoOpen(false); setTodoCreate(0); setFocusOpen(true) }) }, [focus.state])
+  const [focusVisit, setFocusVisit] = useState(0)
+  useEffect(() => {
+    if (!focus.state?.open_requested) return
+    queueMicrotask(() => {
+      setCampusTool(null); setGuideOpen(false); setTodoOpen(false); setTodoCreate(0)
+      setSchoolOpen(false); setClassroomOpen(false); setFeature(null); setCourse(null); setEditor(null); setBackgroundOpen(false)
+      setFocusVisit(value => value + 1)
+      setFocusOpen(true)
+    })
+  }, [focus.state])
   const background = useHomeBackground()
   const [backgroundOpen, setBackgroundOpen] = useState(false)
   const [boot, setBoot] = useState<LocalBootstrap | null>(null)
@@ -163,10 +175,10 @@ export function MobileApp() {
   const [colorError, setColorError] = useState("")
   const [clock, setClock] = useState(chinaClock)
   const [date, setDate] = useState(chinaDate)
-  const motion = useHomeMotion(page === "home" && !modalOpen && !notice.open && !backgroundOpen && !schoolOpen && !focusOpen && !todoOpen && !guideOpen && !course && !editor)
+  const motion = useHomeMotion(page === "home" && !modalOpen && !notice.open && !backgroundOpen && !schoolOpen && !focusOpen && !todoOpen && !guideOpen && !campusTool && !course && !editor)
   const presentation = useMobilePresentation(ui.style)
   const content = useRef<HTMLElement>(null)
-  useContentTransition(content, page, navigation.findIndex(n => n.id === page), !!boot && !(modalOpen || notice.open || guideOpen || focusOpen || todoOpen || schoolOpen || classroomOpen || course || editor || backgroundOpen || feature))
+  useContentTransition(content, page, navigation.findIndex(n => n.id === page), !!boot && !(modalOpen || notice.open || guideOpen || campusTool || focusOpen || todoOpen || schoolOpen || classroomOpen || course || editor || backgroundOpen || feature))
   const { theme } = presentation
   const alive = useRef(true)
   const request = useRef(0)
@@ -206,22 +218,30 @@ export function MobileApp() {
     queueMicrotask(() => {
       if (live) void refresh().catch(() => {})
     })
-    const changed = () => { setGuideOpen(false); setPage(initialPage()); document.getElementById("xm-content")?.scrollTo({ top: 0 }) }
+    const changed = () => { setGuideOpen(false); setCampusTool(null); setPage(initialPage()); document.getElementById("xm-content")?.scrollTo({ top: 0 }) }
+    const openTimetable = () => {
+      setFocusOpen(false); setTodoOpen(false); setTodoCreate(0); setSchoolOpen(false); setClassroomOpen(false)
+      setCourse(null); setEditor(null); setBackgroundOpen(false); setFeature(null)
+      changed()
+    }
     const timer = window.setInterval(() => {
       setClock(chinaClock())
       setDate(chinaDate())
     }, 30000)
     window.addEventListener("hashchange", changed)
+    window.addEventListener("henubox:open-timetable", openTimetable)
     return () => {
       live = false
       alive.current = false
       document.body.classList.remove("xique-mobile-v2")
       window.clearInterval(timer)
       window.removeEventListener("hashchange", changed)
+      window.removeEventListener("henubox:open-timetable", openTimetable)
     }
   }, [refresh])
   function navigate(next: MobilePage) {
     setGuideOpen(false)
+    setCampusTool(null)
     location.hash = `/${next}`
     setPage(next)
     document.getElementById("xm-content")?.scrollTo({ top: 0 })
@@ -325,14 +345,14 @@ export function MobileApp() {
         跳到主要内容
       </a>
       {page === "campus" && (
-        <header className="xm-heading" inert={focusOpen || todoOpen} aria-hidden={focusOpen || todoOpen || undefined}>
+        <header className="xm-heading" inert={focusOpen || todoOpen || !!campusTool} aria-hidden={focusOpen || todoOpen || !!campusTool || undefined}>
           <div>
             <h1>Campus</h1>
             <p>让校园生活，简单一点。</p>
           </div>
         </header>
       )}
-      <main ref={content} id="xm-content" inert={focusOpen || todoOpen} aria-hidden={focusOpen || todoOpen || undefined} aria-label={navigation.find((item) => item.id === page)?.title}>
+      <main ref={content} id="xm-content" inert={focusOpen || todoOpen || !!campusTool} aria-hidden={focusOpen || todoOpen || !!campusTool || undefined} aria-label={navigation.find((item) => item.id === page)?.title}>
         {error && (
           <div className="xm-notice" role="alert">
             {error}
@@ -398,7 +418,6 @@ export function MobileApp() {
                 </span>
               </div>
             </button><div className="xm-hero-tools"><button type="button" className="xm-hero-customize" aria-label="更换首页背景" onClick={() => setBackgroundOpen(true)}><ImagePlus size={16} /><span>换背景</span></button></div></div>
-            {focus.state?.timer && <button className="xm-focus-strip" onClick={() => setFocusOpen(true)}><Timer size={21} /><span>{focus.state.timer.status === "RUNNING" ? "专注进行中" : "计时已暂停"}<small>{focus.state.timer.label || "点击返回专注时光"}</small></span><strong>{focusTime(focus.state.timer.mode === "countup" ? focus.state.timer.elapsed_ms : focus.state.timer.remaining_ms)}</strong><ChevronRight size={17} /></button>}
             <section className="xm-today">
               <div className="xm-section-title">
                 <h2>今天的课程</h2>
@@ -437,6 +456,8 @@ export function MobileApp() {
               )}
             </section>
             <HomeTodos todos={todos} open={() => openTodos()} add={() => openTodos(true)} />
+            {focus.state?.timer && <button className="xm-focus-strip" onClick={() => setFocusOpen(true)}><Timer size={21} /><span>{focus.state.timer.status === "RUNNING" ? "专注计时中" : focus.state.timer.status === "INTERRUPTED" ? "专注已中断" : "专注已暂停"}<small>{focus.state.timer.label || "点击返回专注时光"}</small></span><strong>{focusTime(focus.state.timer.mode === "countup" ? focus.state.timer.elapsed_ms : focus.state.timer.remaining_ms)}</strong><ChevronRight size={17} /></button>}
+            <HomePlanner today={date} todos={todos} open={(tab, date) => setCampusTool({ tab, date })} />
           </>
         )}
         {page === "timetable" && (
@@ -546,6 +567,11 @@ export function MobileApp() {
                 <CampusArt kind="guide" />
                 <span className="xm-card-arrow"><ArrowRight size={20} /></span>
               </button>
+              <button className="xm-service-card xm-planner-entry" aria-label="时间与计划" onClick={() => setCampusTool({ tab: "倒计时" })}>
+                <div><h2>时间与计划</h2><p>倒计时、倒数日和计划表</p></div>
+                <CalendarRange className="xk-card-art" aria-hidden="true" strokeWidth={1} />
+                <span className="xm-card-arrow"><ArrowRight size={20} /></span>
+              </button>
             </section>
             <p className="xm-campus-note">课表离线可用，教室联网查询，图书馆与邮箱直达官网。</p>
             {emailError && <p className="xm-notice" role="alert">{emailError}<button onClick={() => void openEmail()}>重新打开邮箱开户</button></p>}
@@ -557,11 +583,12 @@ export function MobileApp() {
             )}
           </>
         )}
-        {page === "me" && <MeSettings boot={boot} connection={connection} semester={semester} courseCount={allCourses.length} saved={savedTime(boot.saved_at)} todoCount={(todos.state?.counts.open ?? 0) + (todos.state?.counts.completed ?? 0)} presentation={presentation} style={ui.style} setStyle={ui.setStyle} backgroundCustom={!!background.src} openBackground={() => setBackgroundOpen(true)} openSchool={openSchool} refresh={refresh} />}
+        {page === "me" && <MeSettings boot={boot} connection={connection} semester={semester} courseCount={allCourses.length} saved={savedTime(boot.saved_at)} todoCount={(todos.state?.counts.open ?? 0) + (todos.state?.counts.completed ?? 0)} presentation={presentation} style={ui.style} setStyle={ui.setStyle} backgroundCustom={!!background.src} openBackground={() => setBackgroundOpen(true)} openSchool={openSchool} refresh={refresh} refreshPersonal={() => { void todos.refresh(); void focus.refresh() }} />}
       </main>
-      <MobileNavigation page={page} navigate={navigate} suspended={modalOpen || notice.open || guideOpen || focusOpen || todoOpen || schoolOpen || classroomOpen || !!course || !!editor || backgroundOpen || !!feature} />
+      <MobileNavigation page={page} navigate={navigate} suspended={modalOpen || notice.open || guideOpen || !!campusTool || focusOpen || todoOpen || schoolOpen || classroomOpen || !!course || !!editor || backgroundOpen || !!feature} />
       <FirstRunNotice notice={notice} />
       {guideOpen && <CampusGuidePage close={() => setGuideOpen(false)} workspaceId={boot.workspace_id} semester={semester} />}
+      {campusTool && <CampusPlannerPage today={date} todos={todos} initialTab={campusTool.tab} initialPlanDate={campusTool.date} fromHome={page === "home"} close={() => setCampusTool(null)} />}
       {todoOpen && <TodoPage todos={todos} createRequest={todoCreate} close={() => { setTodoOpen(false); setTodoCreate(0) }} />}
       {classroomOpen && (
         <ClassroomPage
@@ -698,7 +725,7 @@ export function MobileApp() {
         local={{ workspaceId: boot.workspace_id, revision: boot.revision }}
         close={() => setEditor(null)} saved={async () => { await refresh(); setEditor(null) }} />}
       {backgroundOpen && <HomeBackgroundSettings value={background} close={() => setBackgroundOpen(false)} />}
-      {focusOpen && <FocusPage focus={focus} courseNames={[...new Set(allCourses.map(c => c.name))]} close={() => setFocusOpen(false)} />}
+      {focusOpen && <FocusPage key={focusVisit} focus={focus} courseNames={[...new Set(allCourses.map(c => c.name))]} close={() => setFocusOpen(false)} />}
     </div>
   )
 }

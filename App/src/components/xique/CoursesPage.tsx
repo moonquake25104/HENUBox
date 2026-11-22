@@ -114,9 +114,8 @@ export function CoursesPage({
             <div className="xq-list-title">
               <strong>{item.title}</strong>
               <span>
-                <MapPin size={13} />
-                {item.location || "地点待填写"}
-                <em>· {item.teacher || "教师待填写"}</em>
+                {localMode ? <span className="xm-list-room"><MapPin size={13} aria-hidden="true" /><span>{item.location || "地点待填写"}</span></span> : <><MapPin size={13} />{item.location || "地点待填写"}</>}
+                <em>{localMode ? "" : "· "}{item.teacher || "教师待填写"}</em>
               </span>
             </div>
             <div className="xq-list-time">

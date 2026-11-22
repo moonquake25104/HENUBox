@@ -23,8 +23,19 @@ public final class XiqueFocusPlugin extends Plugin {
         getActivity().runOnUiThread(() -> {
             if(!trusted(call))return;
             String action=call.getString("action","");
-            if(Build.VERSION.SDK_INT>=33&&(action.equals("start")||action.equals("resume"))&&getPermissionState("notifications")==PermissionState.PROMPT)requestPermissionForAlias("notifications",call,"notificationResult");
-            else run(call,"command");
+            if (Build.VERSION.SDK_INT >= 33 && (action.equals("start") || action.equals("resume"))
+                    && getContext().checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                try {
+                    PermissionState permission = getPermissionState("notifications");
+                    if (permission == PermissionState.PROMPT || permission == PermissionState.PROMPT_WITH_RATIONALE) {
+                        requestPermissionForAlias("notifications", call, "notificationResult");
+                        return;
+                    }
+                } catch (RuntimeException failed) {
+                    android.util.Log.w("HENUBoxFocus", "Unable to request notification permission", failed);
+                }
+            }
+            run(call,"command");
         });
     }
     @PermissionCallback private void notificationResult(PluginCall call){getActivity().runOnUiThread(() -> {if(trusted(call))run(call,"command");});}
@@ -41,17 +52,19 @@ public final class XiqueFocusPlugin extends Plugin {
                     s=engine.command(BridgeArgs.text(d,"action",16),BridgeArgs.integer(d,"expected_revision"),BridgeArgs.uuid(d,"request_id"),(String)mode,(String)label);
                 }
                 s.put("notification_permission",NotificationManagerCompat.from(getContext()).areNotificationsEnabled());
-                if("com.xique.assistant.OPEN_FOCUS".equals(getActivity().getIntent().getAction())) {
+                if(FocusWidget.OPEN_FOCUS.equals(getActivity().getIntent().getAction())) {
                     s.put("open_requested",true);getActivity().getIntent().setAction(null);
                 }
                 JSObject result=new JSObject(s.toString());
                 getActivity().runOnUiThread(() -> {
                     try {
                         if(method.equals("command")||s.optJSONObject("timer")!=null&&!engine.isForegroundAttached())FocusService.sync(getContext(),s);
+                        if(!method.equals("state")) FocusWidget.refresh(getContext());
                         call.resolve(result);
                     }catch(Exception denied){
                         // State has already committed. Pause instead of claiming the start never happened.
                         try {JSONObject t=s.optJSONObject("timer");if(t!=null&&"RUNNING".equals(t.optString("status")))engine.notificationAction("pause",t.optString("id"));}catch(Exception ignored){}
+                        FocusWidget.refresh(getContext());
                         call.reject("后台计时启动失败，请重新打开后继续","BACKGROUND_UNAVAILABLE");
                     }
                 });

@@ -71,12 +71,12 @@ export function weekSlots(configured: TimeSlot[], courses: CourseTime[]): TimeSl
   for (const gap of gaps)
     if (
       gap.start < gap.end &&
-      boundaries.some(
+      (boundaries.some(
         (time) =>
           (time > gap.start && time < gap.end) ||
           (time === gap.start && time < configured[0].start) ||
           (time === gap.end && time > configured.at(-1)!.end),
-      )
+      ) || courses.some(course => clockMinutes(course.start_time) === gap.start && clockMinutes(course.end_time) === gap.end))
     )
       slots.push({ index: null, ...gap })
   return slots.sort((a, b) => a.start - b.start)
@@ -109,4 +109,39 @@ export function slotPosition(slots: TimeSlot[], time: number) {
     offset += weight
   }
   return offset
+}
+
+/** Keep the timeline aligned across columns while making room for each card. */
+export function fitWeekRows(slots: TimeSlot[], courses: { start: number; end: number; height: number }[]) {
+  const ending = new Map<number, { start: number; height: number }[]>()
+  const boundaries = new Set([0, slotTotal(slots)])
+  for (const slot of slots) {
+    boundaries.add(slotPosition(slots, slot.start))
+    boundaries.add(slotPosition(slots, slot.end))
+  }
+  for (const course of courses) {
+    if (!Number.isFinite(course.start) || !Number.isFinite(course.end)) continue
+    const start = slotPosition(slots, course.start)
+    const end = slotPosition(slots, course.end)
+    if (start >= end) continue
+    boundaries.add(start)
+    boundaries.add(end)
+    const group = ending.get(end) ?? []
+    group.push({ start, height: course.height })
+    ending.set(end, group)
+  }
+  const pixels = new Map([[0, 0]])
+  let offset = 0, height = 0
+  for (const boundary of [...boundaries].sort((a, b) => a - b)) {
+    height += (boundary - offset) * 46
+    for (const course of ending.get(boundary) ?? []) {
+      height = Math.max(height, pixels.get(course.start)! + course.height)
+    }
+    pixels.set(boundary, height)
+    offset = boundary
+  }
+  return {
+    height,
+    percent: (time: number) => 100 * (pixels.get(slotPosition(slots, time)) ?? 0) / Math.max(1, height),
+  }
 }

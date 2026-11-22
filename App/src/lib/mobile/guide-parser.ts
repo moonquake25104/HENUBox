@@ -12,6 +12,13 @@ export type GuideKind = keyof typeof GUIDE_PAGES
 export type DocumentKind = Exclude<GuideKind, "vr">
 export type GuideImage = { url: string; title: string }
 export type GuideSection = { title: string; paragraphs: string[]; images: GuideImage[] }
+export function cleanEmblemSections(sections: GuideSection[]): GuideSection[] {
+  return sections.filter(section => section.title.replace(/\s/g, "") !== "标识下载").map(section => ({
+    ...section,
+    // Older cached paragraphs include the link's label as plain text.
+    paragraphs: section.paragraphs.map(paragraph => paragraph.replace(/\s*标\s*识\s*下\s*载\s*$/, "")).filter(Boolean),
+  }))
+}
 export type GuidePhone = { department: string; internal: string; external: string; dial: string[] }
 export type GuideDocument = { version: 1; kind: DocumentKind; fetchedAt: number; images: GuideImage[]; sections: GuideSection[]; phones: GuidePhone[]; audio?: string }
 export const ANTHEM_AUDIO = "https://www.henu.edu.cn/mp3/xiaoge.mp3"
@@ -59,7 +66,10 @@ export function parseGuidePage(kind: DocumentKind, html: string, now = Date.now(
     result.images = paths.flatMap((p, i) => { if (typeof p !== "string") return []; const url = new URL(p, base).href; return guideAssetUrl(url) ? [{ url, title: known[i] && url.includes(known[i]) ? titles[i] : `官方时刻表 · 第 ${i + 1} 页` }] : [] })
     if (!result.images.length) throw new Error("GUIDE_FORMAT_CHANGED")
   } else if (kind === "emblem") {
-    result.sections = [...body.children].filter(e => e.querySelector(".xtit")).map(e => ({ title: text(e.querySelector(".xtit")!), paragraphs: [...e.querySelectorAll(".desc p")].map(text).filter(Boolean), images: [...e.querySelectorAll("img")].flatMap(im => { const v = image(im, base, text(e.querySelector(".xtit")!)); return v ? [v] : [] }) }))
+    body.querySelectorAll("a").forEach(link => {
+      if (text(link).replace(/\s/g, "") === "标识下载") link.remove()
+    })
+    result.sections = cleanEmblemSections([...body.children].filter(e => e.querySelector(".xtit")).map(e => ({ title: text(e.querySelector(".xtit")!), paragraphs: [...e.querySelectorAll(".desc p")].map(text).filter(Boolean), images: [...e.querySelectorAll("img")].flatMap(im => { const v = image(im, base, text(e.querySelector(".xtit")!)); return v ? [v] : [] }) })))
     if (!result.sections.some(s => s.title === "校徽") || !result.sections.some(s => s.title === "校训") || !result.sections.some(s => s.title === "校风")) throw new Error("GUIDE_FORMAT_CHANGED")
   } else {
     const content = body.querySelector('[id="vsb_content_2"],[id="vsb_content"],[id="vsb_content_4"]') || body

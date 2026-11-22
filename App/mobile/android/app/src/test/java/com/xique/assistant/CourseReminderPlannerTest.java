@@ -25,6 +25,13 @@ public class CourseReminderPlannerTest {
     @Test public void invalidRowsAndUnknownPatternDoNotCreateAlarms(){
         assertTrue(CourseReminderPlanner.future(List.of(course("未知周次","08:30",1),course("1周","26:00",1),course("1周","08:30",0)),at("2026-08-30T20:00"),10).isEmpty());
     }
+    @Test public void overdueLeadIsStillEligibleUntilClassStarts() {
+        var courses = List.of(course("1周", "08:30", 1));
+        var plan = CourseReminderPlanner.upcoming(courses, at("2026-08-31T08:29"), 10);
+        assertEquals(1, plan.size());
+        assertEquals(at("2026-08-31T08:20"), plan.get(0).at);
+        assertTrue(CourseReminderPlanner.upcoming(courses, at("2026-08-31T08:31"), 10).isEmpty());
+    }
     @Test public void simultaneousCoursesAreNotDropped(){
         var a=course("1周","08:30",1);var b=new CourseReminderPlanner.Course(2,"合成课程二","","2026-08-31","08:30","1周",1);
         var plan=CourseReminderPlanner.future(List.of(b,a),at("2026-08-30T20:00"),0);assertEquals(2,plan.size());assertEquals(1,plan.get(0).course.id);assertNotEquals(plan.get(0).key,plan.get(1).key);

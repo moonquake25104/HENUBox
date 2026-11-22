@@ -1,5 +1,5 @@
 import { Capacitor, registerPlugin } from "@capacitor/core"
-import { GUIDE_PAGES, parseGuidePage, type DocumentKind, type GuideDocument, type GuideKind, guideAssetUrl } from "./guide-parser"
+import { GUIDE_PAGES, cleanEmblemSections, parseGuidePage, type DocumentKind, type GuideDocument, type GuideKind, guideAssetUrl } from "./guide-parser"
 export { GUIDE_PAGES, type GuideKind, type GuideDocument, type DocumentKind } from "./guide-parser"
 type Asset = { uri: string; width: number; height: number; bytes: number; stale: boolean }
 interface GuideBridge {
@@ -16,7 +16,14 @@ const bridge = registerPlugin<GuideBridge>("XiqueGuide"), TTL = 86400000
 export const guideAvailable = () => Capacitor.isPluginAvailable("XiqueGuide")
 function db(): Promise<IDBDatabase> { return new Promise((resolve, reject) => { const r = indexedDB.open("henubox-campus-guide-v1", 1); r.onupgradeneeded = () => r.result.createObjectStore("documents", { keyPath: "kind" }); r.onsuccess = () => resolve(r.result); r.onerror = () => reject(r.error) }) }
 async function store<T>(mode: IDBTransactionMode, action: (s: IDBObjectStore) => IDBRequest<T>): Promise<T> { const d = await db(); try { return await new Promise((resolve, reject) => { const tx = d.transaction("documents", mode), request = action(tx.objectStore("documents")); tx.oncomplete = () => resolve(request.result); tx.onerror = () => reject(tx.error); tx.onabort = () => reject(tx.error) }) } finally { d.close() } }
-export async function readGuide(kind: DocumentKind): Promise<GuideDocument | null> { try { const d = await store<GuideDocument | undefined>("readonly", s => s.get(kind)); return d?.version === 1 && d.kind === kind && Number.isFinite(d.fetchedAt) && Array.isArray(d.images) && Array.isArray(d.sections) && Array.isArray(d.phones) ? d : null } catch { return null } }
+export async function readGuide(kind: DocumentKind): Promise<GuideDocument | null> {
+  try {
+    const d = await store<GuideDocument | undefined>("readonly", s => s.get(kind))
+    if (d?.version !== 1 || d.kind !== kind || !Number.isFinite(d.fetchedAt)
+        || !Array.isArray(d.images) || !Array.isArray(d.sections) || !Array.isArray(d.phones)) return null
+    return kind === "emblem" ? { ...d, sections: cleanEmblemSections(d.sections) } : d
+  } catch { return null }
+}
 const pending = new Map<string, Promise<GuideDocument>>()
 let cacheEpoch = 0
 export async function loadGuide(kind: DocumentKind, refresh = false): Promise<{ document: GuideDocument; stale: boolean; cache: boolean }> {

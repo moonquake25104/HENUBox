@@ -19,25 +19,25 @@ public final class FocusService extends Service {
     private FocusAudio audio;
     private final Runnable ticker=new Runnable() { public void run(){ update();if(engine!=null)handler.postDelayed(this,1000); } };
     @Override public IBinder onBind(Intent intent){return null;}
-    @Override public void onCreate(){super.onCreate();engine=FocusEngine.get(this);audio=new FocusAudio(this);}
+    @Override public void onCreate(){super.onCreate();engine=FocusEngine.get(this);try{audio=new FocusAudio(this);}catch(RuntimeException error){android.util.Log.w("HENUBoxFocus","The timer will start without background audio",error);}}
     public static void sync(Context context,JSONObject state) {
         if(state.optJSONObject("timer")==null)context.stopService(new Intent(context,FocusService.class));
         else context.startForegroundService(new Intent(context,FocusService.class));
     }
     @Override public int onStartCommand(Intent intent,int flags,int id) {
         try {
+            Notification notification = notification(null);
+            if(Build.VERSION.SDK_INT>=34)startForeground(ONGOING,notification,ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE|("off".equals(FocusExtras.prefs(this).getString("sound","off"))?0:ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK));else startForeground(ONGOING,notification);
             if(intent!=null&&intent.hasExtra("control"))engine.notificationAction(intent.getStringExtra("control"),intent.getStringExtra("session"));
             JSONObject state=engine.getState();
             if(state.optJSONObject("timer")!=null)getSystemService(NotificationManager.class).cancel(FINISHED);
-            Notification notification=notification(state);
-            if(Build.VERSION.SDK_INT>=34)startForeground(ONGOING,notification,ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE|("off".equals(FocusExtras.prefs(this).getString("sound","off"))?0:ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK));else startForeground(ONGOING,notification);
-            engine.setForegroundAttached(true);handler.removeCallbacks(ticker);update();
+            engine.setForegroundAttached(true);rendered="";handler.removeCallbacks(ticker);update();
             if(engine!=null)handler.postDelayed(ticker,1000);
-        }catch(Exception error){stopSelf();}
+        }catch(Exception error){android.util.Log.w("HENUBoxFocus","Unable to start focus service",error);stopSelf();}
         return START_NOT_STICKY;
     }
     private PendingIntent open() {
-        return PendingIntent.getActivity(this,7310,new Intent(this,MainActivity.class).setAction("com.xique.assistant.OPEN_FOCUS").addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
+        return PendingIntent.getActivity(this,7310,new Intent(this,MainActivity.class).setAction(FocusWidget.OPEN_FOCUS).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
     }
     private PendingIntent control(String action,String session) {
         Intent intent=new Intent(this,FocusService.class).setAction("com.xique.assistant.focus."+action+"."+session).putExtra("control",action).putExtra("session",session);
@@ -46,9 +46,9 @@ public final class FocusService extends Service {
     private Notification notification(JSONObject state)throws Exception {
         NotificationManager nm=getSystemService(NotificationManager.class);
         NotificationChannel channel=new NotificationChannel("focus-active","专注计时",NotificationManager.IMPORTANCE_LOW);channel.setSound(null,null);nm.createNotificationChannel(channel);
-        JSONObject t=state.optJSONObject("timer");
+        JSONObject t=state==null?null:state.optJSONObject("timer");
         NotificationCompat.Builder b=new NotificationCompat.Builder(this,"focus-active").setSmallIcon(R.drawable.ic_stat_focus).setContentIntent(open()).setOngoing(true).setOnlyAlertOnce(true).setSilent(true).setCategory(NotificationCompat.CATEGORY_PROGRESS).setVisibility(NotificationCompat.VISIBILITY_PRIVATE);
-        if(t==null)return b.setContentTitle("专注已结束").build();
+        if(t==null)return b.setContentTitle("专注计时").build();
         String mode=t.getString("mode"),status=t.getString("status"),label=t.getString("label");boolean running="RUNNING".equals(status);
         String title="focus".equals(mode)?"专注中":"countup".equals(mode)?"自由专注":"休息中";
         if(!running)title="INTERRUPTED".equals(status)?"专注已中断":"计时已暂停";
@@ -73,16 +73,16 @@ public final class FocusService extends Service {
         try {
             JSONObject s=engine.tick(),done=engine.takeAlert();
             JSONObject t=s.optJSONObject("timer");
-            FocusDnd.sync(this,t);audio.sync(t);
+            FocusDnd.sync(this,t);if(audio!=null)audio.sync(t);
             if(done!=null)alert(done,s.getJSONObject("settings"));
-            if(t==null){release();stopForeground(STOP_FOREGROUND_REMOVE);stopSelf();handler.removeCallbacks(ticker);return;}
+            if(t==null){FocusWidget.refresh(this);release();stopForeground(STOP_FOREGROUND_REMOVE);stopSelf();handler.removeCallbacks(ticker);return;}
             boolean running="RUNNING".equals(t.getString("status"));
             String key=t.getString("id")+t.getString("status");
             if(!key.equals(rendered))release();
             if(running&&(wake==null||!wake.isHeld())) {
                 wake=getSystemService(PowerManager.class).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"Xique:FocusTimer");wake.setReferenceCounted(false);wake.acquire(Math.min(86500000L,t.getLong("remaining_ms")+60000));
             }else if(!running)release();
-            if(!key.equals(rendered)){getSystemService(NotificationManager.class).notify(ONGOING,notification(s));rendered=key;}
+            if(!key.equals(rendered)){getSystemService(NotificationManager.class).notify(ONGOING,notification(s));FocusWidget.refresh(this);rendered=key;}
         }catch(Exception error){release();stopForeground(STOP_FOREGROUND_REMOVE);stopSelf();}
     }
     private void release(){if(wake!=null&&wake.isHeld())wake.release();wake=null;}

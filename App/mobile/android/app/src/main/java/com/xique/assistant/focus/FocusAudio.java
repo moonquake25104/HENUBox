@@ -4,6 +4,7 @@ import android.content.*;
 import android.media.*;
 import android.os.Handler;
 import android.os.Looper;
+import androidx.core.content.ContextCompat;
 import org.json.JSONObject;
 import java.io.File;
 
@@ -12,7 +13,7 @@ public final class FocusAudio implements AutoCloseable {
     private final Context context;private final AudioManager manager;private MediaPlayer player;private AudioFocusRequest request;
     private String key="";private boolean blocked;private static volatile String state="off";
     public static String status(){return state;}
-    public FocusAudio(Context c){context=c;manager=c.getSystemService(AudioManager.class);c.registerReceiver(noisy,new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));}
+    public FocusAudio(Context c){context=c;manager=c.getSystemService(AudioManager.class);ContextCompat.registerReceiver(c,noisy,new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY),ContextCompat.RECEIVER_NOT_EXPORTED);}
     private final BroadcastReceiver noisy=new BroadcastReceiver(){public void onReceive(Context c,Intent i){interrupt();}};
     private void interrupt(){blocked=true;release();state="interrupted";}
     public void sync(JSONObject timer){

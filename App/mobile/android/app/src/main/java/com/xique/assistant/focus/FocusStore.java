@@ -29,12 +29,65 @@ final class FocusStore extends SQLiteOpenHelper {
         SQLiteDatabase db=getWritableDatabase(); db.beginTransaction();
         try {
             if(record!=null) {
-                ContentValues r=new ContentValues();r.put("id",record.getString("id"));r.put("started_at",record.getLong("started_at"));r.put("actual_ms",record.getLong("actual_ms"));r.put("mode",record.getString("mode"));r.put("completed",record.getBoolean("completed")?1:0);r.put("payload",record.toString());
-                db.insertOrThrow("records",null,r);
+                db.insertOrThrow("records", null, recordValues(record));
             }
-            ContentValues v=new ContentValues();v.put("id",1);v.put("payload",state.toString());db.insertWithOnConflict("state",null,v,SQLiteDatabase.CONFLICT_REPLACE);
+            writeState(db, state);
             db.setTransactionSuccessful();
         } finally { db.endTransaction(); }
+    }
+    private static ContentValues recordValues(JSONObject record) throws Exception {
+        ContentValues values = new ContentValues();
+        values.put("id", record.getString("id"));
+        values.put("started_at", record.getLong("started_at"));
+        values.put("actual_ms", record.getLong("actual_ms"));
+        values.put("mode", record.getString("mode"));
+        values.put("completed", record.getBoolean("completed") ? 1 : 0);
+        values.put("payload", record.toString());
+        return values;
+    }
+
+    private static void writeState(SQLiteDatabase db, JSONObject state) {
+        ContentValues values = new ContentValues();
+        values.put("id", 1);
+        values.put("payload", state.toString());
+        db.replaceOrThrow("state", null, values);
+    }
+
+    JSONArray backupRecords(int maximum) throws Exception {
+        JSONArray out = new JSONArray();
+        try (Cursor rows = getReadableDatabase().rawQuery("SELECT payload FROM records ORDER BY started_at,id LIMIT ?",
+                new String[]{String.valueOf(maximum + 1)})) {
+            while (rows.moveToNext()) {
+                if (out.length() >= maximum) throw new IllegalArgumentException("BACKUP_TOO_LARGE");
+                out.put(new JSONObject(rows.getString(0)));
+            }
+        }
+        return out;
+    }
+
+    int mergeBackup(JSONArray records, JSONObject state) throws Exception {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            JSONObject timer = state.optJSONObject("timer");
+            String activeId = timer == null ? "" : timer.getString("id");
+            int inserted = 0;
+            for (int i = 0; i < records.length(); i++) {
+                JSONObject record = records.getJSONObject(i);
+                String id = record.getString("id");
+                if (id.equals(activeId) || recorded(id)) continue;
+                db.insertOrThrow("records", null, recordValues(record));
+                inserted++;
+            }
+            if (inserted > 0) {
+                state.put("revision", state.getLong("revision") + 1);
+                writeState(db, state);
+            }
+            db.setTransactionSuccessful();
+            return inserted;
+        } finally {
+            db.endTransaction();
+        }
     }
     JSONArray recent() throws Exception {
         JSONArray out=new JSONArray();

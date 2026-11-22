@@ -1,5 +1,5 @@
 import type { WeekScheduleItem } from "@/types/schedule"
-import { useEffect, useState, type CSSProperties } from "react"
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react"
 import { Plus } from "lucide-react"
 import { useMobileBack } from "@/lib/mobile/back"
 import { chinaDate, datePlus, weekdays } from "@/components/xique/dates"
@@ -9,8 +9,7 @@ import {
   clockLabel,
   clockMinutes,
   configuredSlots,
-  slotPosition,
-  slotTotal,
+  fitWeekRows,
   weekSlots,
   type TimeSlot,
 } from "@/lib/mobile/week-timeline"
@@ -30,8 +29,6 @@ interface Props {
   add?: (slot: { day_of_week: number; start_time: string; end_time: string }) => void
 }
 
-// Fit the actual time range, including late and overlapping courses, to the
-// available screen height. Only the presentation is compressed; times stay exact.
 function ink(color: string) {
   if (!/^#[0-9a-f]{6}$/i.test(color)) return "#17212d"
   const rgb = [1, 3, 5]
@@ -44,6 +41,8 @@ export function CompactWeek({ days, weekStart, open, workspaceId, semester, revi
   const key = `${workspaceId}:${semester}`
   const selectionScope = `${key}:${weekStart}:${revision}:${days.length}`
   const [selected, setSelected] = useState<string | null>(null)
+  const sheet = useRef<HTMLDivElement>(null)
+  const [cardHeights, setCardHeights] = useState<Record<string, number>>({})
   const hasSelection = selected?.startsWith(selectionScope + "|") ?? false
   useMobileBack(hasSelection, () => setSelected(null))
   useEffect(() => {
@@ -76,12 +75,35 @@ export function CompactWeek({ days, weekStart, open, workspaceId, semester, revi
       active = false
     }
   }, [workspaceId, semester, revision, key])
+  useLayoutEffect(() => {
+    const cards = Array.from(sheet.current?.querySelectorAll<HTMLElement>("[data-week-course-copy]") ?? [])
+    const measure = () => {
+      const heights = Object.fromEntries(cards.map(card => [card.dataset.weekCourseCopy!, Math.ceil(card.offsetHeight)]))
+      setCardHeights(previous => Object.keys(previous).length === cards.length &&
+        Object.entries(heights).every(([id, height]) => previous[id] === height) ? previous : heights)
+    }
+    measure()
+    if (typeof ResizeObserver === "undefined") return
+    const observer = new ResizeObserver(measure)
+    cards.forEach(card => observer.observe(card))
+    return () => observer.disconnect()
+  }, [days])
   const items = days.flat().map((entry) => entry.item)
   const slots = addBreaks(weekSlots(settings.key === key ? settings.slots : [], items))
-  const count = Math.max(1, slotTotal(slots))
-  const position = (time: number) => (100 * slotPosition(slots, time)) / count
+  const { height, percent: position } = fitWeekRows(slots, items.map(item => ({
+    start: clockMinutes(item.start_time),
+    end: clockMinutes(item.end_time),
+    height: (cardHeights[item.id] ?? 44) + 2,
+  })))
+  const dayWidths = days.map(entries => Math.max(1, ...entries.map(entry => entry.lanes)) * 44)
+  const columns = "36px " + dayWidths.map(width => `minmax(${width}px, 1fr)`).join(" ")
   return (
-    <div className="xm-compact-week" aria-label="整周课表" data-week-days={days.length} style={{ "--xm-week-days": days.length } as CSSProperties}>
+    <div className="xm-compact-week" aria-label="整周课表" data-week-days={days.length}>
+      <div className="xm-week-sheet" ref={sheet} style={{
+        minWidth: 36 + dayWidths.reduce((sum, width) => sum + width, 0),
+        "--xm-week-columns": columns,
+        "--xm-week-body-height": `${Math.ceil(height)}px`,
+      } as CSSProperties}>
       <div className="xm-week-head">
         <span className="xm-axis-heading">时间</span>
         {weekdays.slice(0, days.length).map((label, index) => (
@@ -181,12 +203,15 @@ export function CompactWeek({ days, weekStart, open, workspaceId, semester, revi
                 title={`${item.title} ${item.start_time}–${item.end_time} ${item.location}`}
                 onClick={() => { setSelected(null); open(item) }}
               >
-                <strong>{item.title}</strong>
-                <span>{item.location || "未标教室"}</span>
+                <span className="xm-week-course-copy" data-week-course-copy={item.id}>
+                  <strong>{item.title}</strong>
+                  <span className="xm-week-course-room">{item.location || "未标教室"}</span>
+                </span>
               </button>
             ))}
           </div>
         ))}
+      </div>
       </div>
     </div>
   )

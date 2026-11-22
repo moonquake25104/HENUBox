@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="focus_widget_label">专注时光</string>
+    <string name="focus_widget_preview_time">25:00</string>
+    <string name="focus_widget_preview_status">打开开始专注</string>
+    <string name="timetable_widget_name">今明课表</string>
+    <string name="timetable_widget_today">今天</string>
+    <string name="timetable_widget_tomorrow">明天</string>
+    <string name="widget_week_five_name">五天课表</string>
+    <string name="widget_week_seven_name">七天课表</string>
+    <string name="widget_week_title">本周课表</string>
+    <string name="widget_week_import">打开 HENUBox 导入课表</string>
+    <string name="widget_week_empty">这周没有课程</string>
+    <string name="widget_week_range">%1$s – %2$s</string>
+    <string name="widget_week_more">+%1$d</string>
+    <string name="widget_week_more_description">另有 %1$d 门课程</string>
+    <color name="focus_widget_surface">#E1F0E9</color>
+    <color name="widget_surface_soft">#CCE1F0E9</color>
+    <color name="widget_surface_clear">#A6E1F0E9</color>
+    <color name="widget_week_day_highlight">#BFCBEEDE</color>
+    <color name="widget_week_lesson_surface">#78FFFFFF</color>
+    <color name="focus_widget_text">#182F27</color>
+    <color name="focus_widget_muted">#3D5D50</color>
+</resources>

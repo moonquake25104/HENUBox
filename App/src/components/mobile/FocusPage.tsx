@@ -1,6 +1,6 @@
 import { useRef, useState, type CSSProperties } from "react"
 import { useContentTransition } from "@/hooks/use-content-transition"
-import { ArrowLeft, BarChart3, Check, ChevronRight, Pause, Play, Plus, Settings2, Square, Timer, Trash2 } from "lucide-react"
+import { ArrowLeft, BarChart3, Check, ChevronRight, LayoutGrid, Pause, Play, Plus, Settings2, Square, Timer, Trash2 } from "lucide-react"
 import { Modal } from "@/components/shared/modal"
 import { useMobileBack } from "@/lib/mobile/back"
 import { FOCUS_NAMES, focusDuration, focusTime, type FocusMode, type FocusSettings } from "@/lib/mobile/focus"
@@ -9,6 +9,7 @@ import "./focus.css"
 import { FocusGoalProgress, FocusGoalSettings, FocusHeatmap } from "./FocusInsights"
 import { FocusExtrasPanel } from "./FocusExtrasPanel"
 import { ChoicePicker } from "./ChoicePicker"
+import { campusToolsAvailable, pinFocusWidget } from "@/lib/mobile/campus-tools"
 
 export function FocusPage({ focus, courseNames, close }: { focus: FocusController; courseNames: string[]; close: () => void }) {
   const [view, setView] = useState<"timer" | "records" | "settings">("timer")
@@ -54,6 +55,7 @@ export function FocusPage({ focus, courseNames, close }: { focus: FocusControlle
         <FocusSettingsForm key={s.revision + ":" + !!t} value={s.settings} active={!!t} busy={busy} save={focus.saveSettings} />
         <FocusGoalSettings />
         <FocusExtrasPanel />
+        <FocusWidgetSettings />
         <section className="xf-panel"><h2>我的标签</h2><p className="xf-muted">课表中的课程也能直接选择。归档不会删除历史记录。</p><form className="xf-tag-form" onSubmit={e => { e.preventDefault(); void focus.command("tag", "", tag).then(ok => { if (ok) setTag("") }) }}><input aria-label="新标签名称" value={tag} maxLength={80} placeholder="例如：英语、阅读" onChange={e => setTag(e.target.value)} /><button disabled={busy || !tag.trim() || [...tag.trim()].length > 40} aria-label="添加专注标签"><Plus size={20} /></button></form><div className="xf-tags">{s.labels.map(n => <span key={n}>{n}<button aria-label={`归档标签 ${n}`} disabled={busy} onClick={() => void focus.command("archive", "", n)}><Trash2 size={14} /></button></span>)}</div></section>
       </>}
       {view === "records" && <>
@@ -64,6 +66,23 @@ export function FocusPage({ focus, courseNames, close }: { focus: FocusControlle
       </>}
     </>}
     {confirm && <Modal open title="结束这次计时？" onOpenChange={setConfirm} className="xm-feature-modal"><p className="xf-muted">已用时长会保存。提前结束不计作一个完整番茄；休息不会计入专注时长。</p><div className="xf-controls"><button className="xf-secondary" disabled={busy} onClick={() => setConfirm(false)}>继续这一段</button><button className="xf-primary" disabled={busy} onClick={() => void focus.command("finish").then(ok => { if (ok) setConfirm(false) })}>结束并保存</button></div></Modal>}
+  </section>
+}
+
+function FocusWidgetSettings() {
+  const [message, setMessage] = useState("")
+  const [busy, setBusy] = useState(false)
+  return <section className="xf-panel">
+    <h2>桌面小组件</h2>
+    <p className="xf-muted">2×2 显示专注计时。点击小组件可回到专注时光。</p>
+    <button className="xf-secondary" disabled={!campusToolsAvailable() || busy} onClick={() => {
+      setBusy(true)
+      setMessage("")
+      void pinFocusWidget().then(result => setMessage(result.requested ? "请在桌面提示中确认添加。" : "请从桌面的小组件列表添加。"))
+        .catch(() => setMessage("请从桌面的小组件列表添加。")).finally(() => setBusy(false))
+    }}><LayoutGrid size={17} />添加到桌面</button>
+    <p className="xf-muted">也可以长按桌面空白处，在小组件里找到 HENUBox 的「专注时光」。</p>
+    {message && <p role="status" className="xf-muted">{message}</p>}
   </section>
 }
 

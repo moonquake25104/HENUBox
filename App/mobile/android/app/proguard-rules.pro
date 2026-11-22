@@ -27,3 +27,8 @@
 -keep class go.** { *; }
 -keep class henuparse.** { *; }
 -keepclassmembers class * { @android.webkit.JavascriptInterface <methods>; }
+
+# Capacitor discovers nested permission annotations and callbacks with reflection.
+-keepattributes RuntimeVisibleAnnotations,RuntimeInvisibleAnnotations,AnnotationDefault
+-keep @interface com.getcapacitor.annotation.** { *; }
+-keep class com.getcapacitor.PluginHandle { *; }

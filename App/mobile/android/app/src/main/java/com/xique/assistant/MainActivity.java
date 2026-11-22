@@ -15,7 +15,14 @@ public class MainActivity extends BridgeActivity {
     com.henubox.glass.BackdropNavHost backdropHost;
     com.henubox.glass.BackdropNavHost ensureBackdropHost(){if(backdropHost==null)backdropHost=com.henubox.glass.BackdropNavHost.install(this,bridge.getWebView());return backdropHost;}
     @Override public void onDestroy(){if(backdropHost!=null){backdropHost.dispose();backdropHost=null;}super.onDestroy();}
-    @Override public void onNewIntent(android.content.Intent intent) { super.onNewIntent(intent);setIntent(intent);if(CourseReminders.OPEN.equals(intent.getAction())&&bridge!=null&&SessionPolicy.trustedPage(bridge.getWebView().getUrl()))bridge.getWebView().post(()->bridge.getWebView().evaluateJavascript("window.location.hash='#/timetable'",null)); }
+    @Override public void onNewIntent(android.content.Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        if (CourseReminders.OPEN.equals(intent.getAction()) && bridge != null && SessionPolicy.trustedPage(bridge.getWebView().getUrl())) {
+            bridge.getWebView().post(() -> bridge.getWebView().evaluateJavascript(
+                    "window.location.hash='#/timetable';window.dispatchEvent(new Event('henubox:open-timetable'));", null));
+        }
+    }
     @Override
     public void onCreate(Bundle state) {
         registerPlugin(XiqueSessionPlugin.class);
@@ -28,11 +35,13 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(XiqueFocusPlugin.class);
         registerPlugin(XiqueFocusExtrasPlugin.class);
         registerPlugin(XiqueTodoPlugin.class);
+        registerPlugin(XiqueBackupPlugin.class);
         registerPlugin(XiqueAppearancePlugin.class);
         registerPlugin(XiqueBackdropPlugin.class);
         registerPlugin(XiqueCourseRemindersPlugin.class);
         registerPlugin(XiqueGuidePlugin.class);
         registerPlugin(XiqueUpdatePlugin.class);
+        registerPlugin(XiqueCampusToolsPlugin.class);
         super.onCreate(state);
         restoreAppAppearance();
     }

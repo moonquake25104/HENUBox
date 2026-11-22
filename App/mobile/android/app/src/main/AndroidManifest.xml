@@ -58,7 +58,45 @@
         <service android:name=".focus.FocusDnd" android:label="HENUBox 专注勿扰" android:permission="android.permission.BIND_CONDITION_PROVIDER_SERVICE" android:exported="true">
             <intent-filter><action android:name="android.service.notification.ConditionProviderService" /></intent-filter>
         </service>
+        <receiver android:name=".focus.FocusWidget" android:label="@string/focus_widget_label" android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_focus_info" />
+        </receiver>
 
+        <receiver android:name=".TimetableWidget" android:label="@string/timetable_widget_name" android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_timetable_info" />
+        </receiver>
+        <receiver android:name=".WeekTimetableWidget$FiveDays" android:label="@string/widget_week_five_name" android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_week_timetable_info" />
+        </receiver>
+        <receiver android:name=".WeekTimetableWidget$SevenDays" android:label="@string/widget_week_seven_name" android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_week_timetable_info" />
+        </receiver>
         <receiver android:name=".CourseReminderReceiver" android:exported="false"><intent-filter>
             <action android:name="android.intent.action.BOOT_COMPLETED" /><action android:name="android.intent.action.TIME_SET" /><action android:name="android.intent.action.TIMEZONE_CHANGED" /><action android:name="android.intent.action.MY_PACKAGE_REPLACED" /><action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
         </intent-filter></receiver>

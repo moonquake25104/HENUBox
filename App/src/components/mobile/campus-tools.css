@@ -1,0 +1,78 @@
+.xm-page-campus .xm-campus-grid {
+  grid-auto-rows: clamp(150px, calc((min(64dvh, 530px) - 28px) / 3), 190px);
+}
+.xm-page-campus .xm-service-card.xm-planner-entry { grid-column: 1; grid-row: 5; background: #DBE4F7; color: #33466B; }
+.xm-page-campus .xm-service-card > .xk-card-art {
+  left: auto;
+  bottom: -10%;
+  right: 8%;
+  width: 58%;
+  height: 67%;
+  opacity: .29;
+  mask-image: none;
+}
+
+.xk-page { padding-bottom: calc(30px + env(safe-area-inset-bottom)); }
+.xk-page h2, .xk-page h3 { margin: 0; font-weight: 650; overflow-wrap: anywhere; }
+.xk-page h2 { font-size: 16px; }
+.xk-page h3 { font-size: 14px; }
+.xk-page .xt-tabs button { padding: 4px; font-size: clamp(11px, 3vw, 13px); }
+.xk-list-head, .xk-day-head, .xk-week-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.xk-list-head { margin: 22px 0 14px; }
+.xk-day-head { padding: 2px 12px 2px 15px; }
+.xk-day-head small { color: var(--xq-blue); margin-left: 5px; font-weight: 550; }
+.xk-week-control { padding: 0 3px; margin-bottom: 12px; color: var(--xq-text); font-size: 13px; }
+.xk-list-head button, .xk-day-head button, .xk-week-control button, .xk-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 10px;
+  min-height: 44px;
+  min-width: 44px;
+  border: 1px solid var(--xq-border);
+  border-radius: 12px;
+  color: var(--xq-text);
+  background: var(--xq-bg);
+  font-size: 12px;
+}
+.xk-day-head button { border-color: transparent; background: none; }
+.xk-empty { text-align: center; padding: 24px 10px; color: var(--xq-muted); font-size: 13px; }
+.xk-card { padding: 15px; margin: 10px 0; }
+.xk-card h2 { margin-bottom: 6px; }
+.xk-card small, .xk-card time, .xk-no-plan { font-size: 11px; color: var(--xq-muted); }
+.xk-card small, .xk-card time { display: block; margin-bottom: 6px; }
+.xk-card p { color: var(--xq-text); font-size: 13px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
+.xk-link { overflow-wrap: anywhere; }
+.xk-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.xk-digits { font-variant-numeric: tabular-nums; font-size: 27px; display: block; margin-bottom: 5px; }
+.xk-plan-day { margin: 9px 0; }
+.xk-home-planner { display: grid; gap: 12px; margin-top: 16px; }
+.xk-home-planner h2 { display: flex; align-items: center; gap: 7px; font-size: 13px; padding: 12px 14px 5px; margin: 0; }
+.xk-home-planner button {
+  display: flex; align-items: center; gap: 8px; width: 100%; min-height: 46px;
+  padding: 7px 14px; border: 0; background: none; color: var(--xq-text); text-align: left;
+}
+.xk-home-planner button + button { border-top: 1px solid var(--xq-border); }
+.xk-home-planner button span { flex: 1; min-width: 0; overflow-wrap: anywhere; font-size: 13px; }
+.xk-home-planner button :is(time, svg) { flex-shrink: 0; font-size: 11px; color: var(--xq-muted); font-variant-numeric: tabular-nums; }
+.xk-no-plan { margin: 0 0 12px 15px; }
+.xk-plan-day .xt-row { border-top: 1px solid var(--xq-border); border-bottom: 0; }
+.xt-editor select[name="category"] {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  min-height: 46px;
+  padding: 9px 11px;
+  border: 1px solid var(--xq-border);
+  border-radius: 13px;
+  background: var(--xq-bg);
+  color: var(--xq-text);
+  font-size: 14px;
+}
+html[data-ui-style=android] .xk-page :is(.xk-list-head, .xk-actions, .xk-week-control, .xt-header) button { border-radius: 8px; }

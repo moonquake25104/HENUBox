@@ -3,6 +3,7 @@ export interface CourseReminderState { enabled: boolean; minutes: number; notifi
 interface Bridge {
   getState(): Promise<CourseReminderState>
   configure(input: { enabled: boolean; minutes: number }): Promise<CourseReminderState>
+  sendTestNotification(): Promise<void>
   openExactSettings(): Promise<void>
   openNotificationSettings(): Promise<void>
 }

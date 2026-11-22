@@ -45,7 +45,7 @@ function GuideDetail({ kind, campus, semester }: { kind: DocumentKind; campus: s
     {notice && <p className="xg-warning" role="status">{notice}</p>}
     {d && <>
       {kind === "calendar" && <p className="xg-note">按官方校历完整展示，含复习考试周；不会修改你的课表周次或作息。</p>}
-      {kind === "maps" && <p className="xg-note">官方校区示意图。切换地图不影响课表校区；点击图片可分块放大查看。</p>}
+      {kind === "maps" && <p className="xg-note">官方校区示意图。切换地图不影响课表校区。点击图片可放大查看细节。</p>}
       {kind === "shuttle" && <p className="xg-note">此处为官方时刻表查询。请留意工作日、周末、假期和冬夏时间，临时调整以学校通知为准。</p>}
       {kind === "visits" && <div className="xg-note"><strong>在微信办理</strong><p>先查看官方流程。可将流程图保存到相册，再用微信“扫一扫 → 相册”识别二维码，由你本人在学校平台完成申请。</p><button className="xg-primary" onClick={() => { setNotice("正在保存官方流程图…"); void saveVisitGuide(d.images[0].url).then(() => { if (live.current) setNotice("已保存到相册，请在微信扫一扫中选择这张图片。") }).catch(e => { if (live.current) setNotice(message(e)) }) }}><Download size={16} />保存官方流程图</button></div>}
       {kind === "phones" && <PhoneList document={d} report={setNotice} />}

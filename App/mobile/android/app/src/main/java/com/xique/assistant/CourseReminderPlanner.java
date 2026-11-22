@@ -1,7 +1,6 @@
 package com.xique.assistant;
 
 import java.time.*;
-import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.regex.*;
@@ -18,6 +17,15 @@ final class CourseReminderPlanner {
         Event(Course c,long start,int minutes){course=c;this.start=start;at=start-minutes*60000L;key=c.id+":"+start;}
     }
     static List<Event> future(List<Course> courses,long now,int minutes){
+        return plan(courses, now, minutes, false);
+    }
+
+    /** Includes classes whose reminder time passed while the class is still ahead. */
+    static List<Event> upcoming(List<Course> courses, long now, int minutes) {
+        return plan(courses, now, minutes, true);
+    }
+
+    private static List<Event> plan(List<Course> courses, long now, int minutes, boolean includeLeadWindow) {
         if(minutes<0||minutes>120)throw new IllegalArgumentException("INVALID_ARGUMENT");
         List<Event> events=new ArrayList<>();Set<List<Object>> seen=new HashSet<>();
         for(Course c:courses)try{
@@ -26,9 +34,11 @@ final class CourseReminderPlanner {
             LocalTime time=LocalTime.parse(c.start);
             for(int w=1;w<=18;w++)if(matches(c.pattern,w)){
                 long start=anchor.plusDays((w-1)*7L+c.weekday-1).atTime(time).atZone(ZONE).toInstant().toEpochMilli();
-                Event event=new Event(c,start,minutes);if(event.at>now&&seen.add(Arrays.asList(c.name,c.location,start)))events.add(event);
+                Event event=new Event(c,start,minutes);
+                if ((event.at > now || (includeLeadWindow && start > now))
+                        && seen.add(Arrays.asList(c.name,c.location,start))) events.add(event);
             }
-        }catch(DateTimeException ignored){/* A malformed course never invents an alarm. */}
+        }catch(DateTimeException | NumberFormatException ignored){/* Ignore malformed saved courses. */}
         events.sort(Comparator.comparingLong((Event e)->e.at).thenComparingLong(e->e.course.id));return events;
     }
     static boolean matches(String pattern,int week){

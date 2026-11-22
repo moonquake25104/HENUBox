@@ -355,18 +355,27 @@
   gap: 4px;
 }
 .xm-compact-week {
-  display: flex;
   flex: 1;
-  flex-direction: column;
   min-height: 0;
-  position: relative;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.xm-week-sheet {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
 }
 .xm-week-head {
+  position: sticky;
+  top: 0;
+  z-index: 4;
   display: grid;
-  grid-template-columns: 36px repeat(var(--xm-week-days, 7), minmax(0, 1fr));
+  grid-template-columns: var(--xm-week-columns);
   flex-shrink: 0;
   height: 39px;
   border-bottom: 1px solid var(--xq-border);
+  background: var(--xq-surface);
 }
 .xm-week-head > div {
   display: flex;
@@ -388,9 +397,17 @@
   color: var(--xq-text);
 }
 .xm-week-head .xm-axis-heading {
-  align-self: center;
-  text-align: center;
+  display: grid;
+  place-items: center;
   font-size: 8px;
+}
+.xm-week-axis,
+.xm-week-head .xm-axis-heading {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: var(--xq-surface);
+  box-shadow: 1px 0 var(--xq-border);
 }
 .xm-week-head .is-today {
   background: var(--xq-soft);
@@ -409,9 +426,9 @@
 .xm-week-body {
   position: relative;
   display: grid;
-  grid-template-columns: 36px repeat(var(--xm-week-days, 7), minmax(0, 1fr));
+  grid-template-columns: var(--xm-week-columns);
   flex: 1;
-  min-height: 0;
+  min-height: var(--xm-week-body-height);
 }
 .xm-grid-line {
   position: absolute;
@@ -444,7 +461,6 @@
   background: #f4f6f5;
   pointer-events: none;
 }
-.xm-week-axis,
 .xm-week-day {
   position: relative;
   z-index: 1;
@@ -515,36 +531,37 @@
   border-radius: 5px;
   min-width: 0;
   min-height: 16px;
-  padding: 4px 2px;
+  padding: 0;
   text-align: left;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  align-items: stretch;
   box-shadow: inset 0 0 0 1px #00000008;
   touch-action: manipulation;
+}
+.xm-week-course-copy {
+  display: block;
+  flex: none;
+  padding: 4px 3px;
 }
 .xm-week-course strong {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   overflow: hidden;
   overflow-wrap: anywhere;
-  word-break: break-all;
-  font-size: 10px;
-  font-weight: 650;
-  line-height: 1.15;
-  flex-shrink: 0;
-}
-.xm-week-course > span {
-  display: block;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  font-size: 8px;
+  font-size: 11px;
+  font-weight: 700;
   line-height: 1.2;
-  opacity: 0.85;
-  min-height: 0;
+}
+.xm-week-course-room {
+  display: block;
+  margin-top: 3px;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+  font-size: 10px;
+  line-height: 1.25;
 }
 .xm-week-empty {
   position: absolute;
@@ -569,7 +586,26 @@
   font-size: 11px;
 }
 .xm-timetable .xm-mode-list .xq-list-title strong {
-  font-size: 12px;
+  font-size: 13px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.xm-timetable .xm-mode-list .xm-list-room {
+  display: flex;
+  flex-basis: 100%;
+  align-items: start;
+  min-width: 0;
+  gap: 4px;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+.xm-list-room svg {
+  flex: none;
+  margin-top: 2px;
+}
+.xm-list-room > span {
+  min-width: 0;
+  white-space: pre-line;
 }
 @media (max-height: 650px) {
   .xm-page-campus,
@@ -598,14 +634,6 @@
   .xm-page-campus .xm-campus-note {
     margin-top: 9px;
   }
-  .xm-week-course strong {
-    font-size: 9px;
-    -webkit-line-clamp: 2;
-  }
-  .xm-week-course > span {
-    font-size: 8px;
-    -webkit-line-clamp: 1;
-  }
 }
 @media (min-width: 600px) {
   .xm-page-campus,
@@ -616,14 +644,14 @@
   .xm-week-head {
     height: 44px;
   }
-  .xm-week-course {
+  .xm-week-course-copy {
     padding: 5px;
   }
   .xm-week-course strong {
     font-size: 12px;
   }
-  .xm-week-course > span {
-    font-size: 10px;
+  .xm-week-course-room {
+    font-size: 11px;
   }
   .xm-page-campus .xm-service-card h2 {
     font-size: 21px;

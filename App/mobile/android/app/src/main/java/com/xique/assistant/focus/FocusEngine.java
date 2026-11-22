@@ -32,6 +32,14 @@ public final class FocusEngine {
     }
     public FocusEngine(Context context,Clock clock) {store=new FocusStore(context);this.clock=clock;}
     public synchronized void close() { store.close(); }
+
+    public synchronized JSONArray backupRecords(int maximum) throws Exception {
+        return store.backupRecords(maximum);
+    }
+
+    public synchronized int mergeBackup(JSONArray records) throws Exception {
+        return store.mergeBackup(records, load());
+    }
     private static JSONObject settings() throws Exception {
         return new JSONObject().put("focus_minutes",25).put("short_minutes",5).put("long_minutes",15).put("long_every",4).put("auto_break",false).put("auto_focus",false).put("sound",true).put("vibrate",true);
     }
@@ -80,6 +88,34 @@ public final class FocusEngine {
     public synchronized void setForegroundAttached(boolean attached) { foregroundAttached=attached; }
     public synchronized boolean isForegroundAttached() { return foregroundAttached; }
     public synchronized JSONObject getState() throws Exception {return present(settle(foregroundAttached));}
+    synchronized WidgetState widgetState() throws Exception {
+        JSONObject state = load();
+        JSONObject timer = state.optJSONObject("timer");
+        if (timer == null) return new WidgetState("打开开始专注", state.getJSONObject("settings").getInt("focus_minutes") * 60000L, false, true);
+        boolean countUp = "countup".equals(timer.getString("mode"));
+        String status = timer.getString("status");
+        boolean sameBoot = timer.getInt("boot_count") == clock.boot() && clock.elapsed() >= timer.getLong("anchor_elapsed");
+        long elapsed = sameBoot ? duration(timer) : timer.getLong("accumulated_ms");
+        long remaining = Math.max(0, timer.getLong("planned_ms") - elapsed);
+        if (!sameBoot || "INTERRUPTED".equals(status)) return new WidgetState("计时已中断", countUp ? elapsed : remaining, false, !countUp);
+        if (remaining == 0) return new WidgetState("计时已结束", countUp ? elapsed : 0, false, !countUp);
+        boolean running = "RUNNING".equals(status);
+        String label = !running ? "已暂停" : countUp ? "自由专注" : "focus".equals(timer.getString("mode")) ? "专注中" : "休息中";
+        return new WidgetState(label, countUp ? elapsed : remaining, running, !countUp);
+    }
+
+    static final class WidgetState {
+        final String label;
+        final long milliseconds;
+        final boolean running, countdown;
+
+        WidgetState(String label, long milliseconds, boolean running, boolean countdown) {
+            this.label = label;
+            this.milliseconds = milliseconds;
+            this.running = running;
+            this.countdown = countdown;
+        }
+    }
     /** Service clock: snapshot checkpoints don't change the command revision. */
     public synchronized JSONObject tick() throws Exception {
         JSONObject s=settle(true),t=s.optJSONObject("timer");

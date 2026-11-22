@@ -62,4 +62,40 @@ public final class TodoStore extends SQLiteOpenHelper {
     public synchronized JSONObject remove(String rawId,long revision)throws JSONException{
         String id=id(rawId);SQLiteDatabase db=getWritableDatabase();db.beginTransaction();try{JSONObject old=find(db,id);if(old!=null){verify(old,revision);db.delete("todos","id=?",new String[]{id});bump(db);}db.setTransactionSuccessful();}finally{db.endTransaction();}return state();
     }
+
+    /** Add records by stable ID. Existing edits and their revisions take precedence. */
+    public synchronized int mergeBackup(JSONArray items) throws JSONException {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            int count;
+            try (Cursor rows = db.rawQuery("SELECT count(*) FROM todos", null)) {
+                rows.moveToFirst();
+                count = rows.getInt(0);
+            }
+            int inserted = 0;
+            for (int i = 0; i < items.length(); i++) {
+                JSONObject item = items.getJSONObject(i);
+                String id = item.getString("id");
+                if (find(db, id) != null) continue;
+                if (count + inserted >= 500) throw new IllegalArgumentException("TODO_LIMIT");
+                ContentValues values = content(item.getString("title"), item.getString("note"),
+                        item.getString("due_date"), item.getBoolean("important"));
+                values.put("id", id);
+                values.put("completed", item.getBoolean("completed") ? 1 : 0);
+                values.put("created_at", item.getLong("created_at"));
+                values.put("updated_at", item.getLong("updated_at"));
+                if (item.isNull("completed_at")) values.putNull("completed_at");
+                else values.put("completed_at", item.getLong("completed_at"));
+                values.put("revision", 1);
+                db.insertOrThrow("todos", null, values);
+                inserted++;
+            }
+            if (inserted > 0) bump(db);
+            db.setTransactionSuccessful();
+            return inserted;
+        } finally {
+            db.endTransaction();
+        }
+    }
 }

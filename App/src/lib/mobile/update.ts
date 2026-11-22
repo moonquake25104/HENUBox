@@ -34,6 +34,7 @@ interface NativeRelease {
 interface XiqueUpdatePlugin {
   check(): Promise<NativeRelease>
   openRelease(options: { url: string }): Promise<void>
+  shareApp(): Promise<void>
 }
 
 const nativePlugin = registerPlugin<XiqueUpdatePlugin>("XiqueUpdate")
@@ -237,4 +238,17 @@ export async function openReleasePage(url: string): Promise<void> {
     return
   }
   window.open(safe, "_blank", "noopener,noreferrer")
+}
+
+export async function shareApp(): Promise<"opened" | "copied"> {
+  if (Capacitor.isNativePlatform() && Capacitor.isPluginAvailable("XiqueUpdate")) {
+    await nativePlugin.shareApp()
+    return "opened"
+  }
+  if (navigator.share) {
+    await navigator.share({ title: "HENUBox", text: "HENUBox · 河小盒", url: RELEASES_URL })
+    return "opened"
+  }
+  await navigator.clipboard.writeText(RELEASES_URL)
+  return "copied"
 }

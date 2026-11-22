@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HttpsURLConnection;
 
 /**
- * Check the public GitHub Releases API and open the release page. The app
+ * Check the public GitHub Releases API and open or share the release page. The app
  * never downloads or installs an APK automatically: the user reviews the
  * release in a browser and installs it through Android's own package flow.
  */
@@ -236,6 +236,32 @@ public final class XiqueUpdatePlugin extends Plugin {
         } catch (Exception e) {
             call.reject("Invalid release URL", "INVALID_ARGUMENT");
         }
+    }
+
+    @PluginMethod
+    public void shareApp(PluginCall call) {
+        if (!trusted()) {
+            call.reject("Untrusted page", "UNTRUSTED_ORIGIN");
+            return;
+        }
+        try {
+            BridgeArgs.exact(call);
+        } catch (IllegalArgumentException | org.json.JSONException e) {
+            call.reject("Invalid arguments", "INVALID_ARGUMENT");
+            return;
+        }
+        getActivity().runOnUiThread(() -> {
+            Intent message = new Intent(Intent.ACTION_SEND)
+                    .setType("text/plain")
+                    .putExtra(Intent.EXTRA_SUBJECT, "HENUBox")
+                    .putExtra(Intent.EXTRA_TEXT, "HENUBox · 河小盒\n" + RELEASES);
+            try {
+                getActivity().startActivity(Intent.createChooser(message, null));
+                call.resolve();
+            } catch (ActivityNotFoundException e) {
+                call.reject("Sharing unavailable", "SHARE_UNAVAILABLE");
+            }
+        });
     }
 
     @Override

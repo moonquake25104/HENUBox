@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="focus_widget_surface">#233B34</color>
+    <color name="widget_surface_soft">#CC233B34</color>
+    <color name="widget_surface_clear">#A6233B34</color>
+    <color name="widget_week_day_highlight">#BF3C6253</color>
+    <color name="widget_week_lesson_surface">#7838544A</color>
+    <color name="focus_widget_text">#E7F6EF</color>
+    <color name="focus_widget_muted">#B5D0C3</color>
+</resources>
