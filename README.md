@@ -2,7 +2,7 @@
 
 面向河南大学学生的 Android 校园工具。保存课表后可以离线查看，也能从应用里查空闲教室、打开图书馆预约，或安排自己的待办和专注时间。应用免费、无广告，由个人维护。
 
-[下载 APK](https://github.com/moonquake25104/HENUBox/releases/latest) · [更新记录](docs/releases/v0.1.3.md) · [反馈问题](https://github.com/moonquake25104/HENUBox/issues)
+[下载 APK](https://github.com/moonquake25104/HENUBox/releases/download/v0.1.3/HENUBox-0.1.3-artwork.apk) · [更新记录](docs/releases/v0.1.3.md) · [反馈问题](https://github.com/moonquake25104/HENUBox/issues)
 
 ## 能做什么
 
