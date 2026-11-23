@@ -11,10 +11,12 @@ export function useTodos() {
     try { const s = await todoBridge.getState(); if (seq === sequence.current) { apply(s); if (live.current) setLoadError("") } } catch (e) { if (live.current && seq === sequence.current) setLoadError(todoError(e)) }
   }, [apply])
   useEffect(() => {
-    live.current = true; void refresh()
+    live.current = true
+    let active = true
+    queueMicrotask(() => { if (active) void refresh() })
     const visible = () => { if (!document.hidden) void refresh() }, timer = window.setInterval(visible, 3000)
     document.addEventListener("visibilitychange", visible)
-    return () => { live.current = false; window.clearInterval(timer); document.removeEventListener("visibilitychange", visible) }
+    return () => { active = false; live.current = false; window.clearInterval(timer); document.removeEventListener("visibilitychange", visible) }
   }, [refresh])
   const perform = async (operation: () => Promise<TodoState>) => {
     if (locked.current || !todosAvailable()) return false

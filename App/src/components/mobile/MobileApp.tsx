@@ -386,7 +386,7 @@ export function MobileApp() {
                     : openSchool
               }
             >
-              {background.src ? background.video ? <HomeVideo src={background.src} poster={background.poster} playing={motion.playing} /> : <img className="xm-hero-photo" data-animated={background.animated && motion.playing || undefined} src={background.animated && !motion.playing ? background.poster ?? background.src : background.src} alt="" /> : <img className="xm-hero-photo" src={defaultHomeCard} alt="" />}
+              {background.src ? background.video ? <HomeVideo key={background.src} src={background.src} poster={background.poster} playing={motion.playing} /> : <img className="xm-hero-photo" data-animated={background.animated && motion.playing || undefined} src={background.animated && !motion.playing ? background.poster ?? background.src : background.src} alt="" /> : <img className="xm-hero-photo" src={defaultHomeCard} alt="" />}
               <div className="xm-hero-copy">
                 <span className="xm-light-label">
                   {next
