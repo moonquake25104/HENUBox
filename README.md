@@ -1,125 +1,66 @@
-# HENUBox 河小盒
+# HENUBox · 河小盒
 
-> 把课表、校园服务和日常小事，装进一个盒子里。
+面向河南大学学生的 Android 校园工具。保存课表后可以离线查看，也能从应用里查空闲教室、打开图书馆预约，或安排自己的待办和专注时间。应用免费、无广告，由个人维护。
 
-面向河南大学校园生活的 Android 工具箱。非学校官方应用，免费、无广告。
+[下载 APK](https://github.com/moonquake25104/HENUBox/releases/latest) · [更新记录](docs/releases/v0.1.3.md) · [反馈问题](https://github.com/moonquake25104/HENUBox/issues)
 
-[下载最新版](https://github.com/moonquake25104/HENUBox/releases/latest) · [问题反馈](https://github.com/moonquake25104/HENUBox/issues) · [参与贡献](CONTRIBUTING.md)
+## 能做什么
 
-## 为什么是河小盒
-
-大学里的信息常常散落在教务系统、图书馆、邮箱和一堆网页里。河小盒想做的事情很简单：把每天真正会用到的部分收在一起，让课表、待办和校园服务触手可及，同时尽量把数据留在你自己的手机上。
+- **看课表、收上课提醒** — 从学校教务保存课表，也可以手动加课、修改时间和地点。支持 18 周、五天或七天视图，以及郑州、金明、明伦三个校区的作息。首页显示今日课程。开启提醒后，可以选提前 5、10、15 或 30 分钟通知。
+- **把课程放到桌面** — 可添加「今明课表」「五天课表」「七天课表」和「专注时光」小组件。五天和七天版可以同时放置，背景有三档透明度。
+- **查校园信息、办常用事项** — 登录教务后可按楼栋、日期和节次查询空闲教室。可打开学校的图书馆预约、邮箱开户页面，也能在校园指南查看校历、校区地图、校内电话、校车和进校预约。
+- **安排学习和生活** — 用番茄钟或正计时专注，可选白噪音和勿扰。用待办、倒计时、倒数日和计划表记下要做的事，首页按已有内容展示。待办和专注记录支持导出和恢复。
+- **自定义界面** — 可在经典、液态玻璃和安卓原生三种风格间切换，搭配五套配色和浅色、深色或跟随系统。首页卡片也可以换成自己的图片或短视频。
 
 ## 界面预览
 
+以下截图均来自 Android 模拟器，课表和待办为演示数据。点击任意截图可查看大图。
+
 <p align="center">
-  <a href="docs/images/preview.jpg">
-    <img src="docs/images/preview.jpg" width="820" alt="HENUBox 界面预览：首页、课表、Campus、外观与配色">
-  </a>
+  <a href="docs/images/home.jpg"><img src="docs/images/home.jpg" width="236" alt="首页，显示示例课程和今日待办"></a>
+  <a href="docs/images/timetable.jpg"><img src="docs/images/timetable.jpg" width="236" alt="周课表，按节次显示课程和教室"></a>
 </p>
-<p align="center"><sub>首页 · 课表 · Campus · 三种外观与五种配色</sub></p>
+<p align="center"><sub>首页 · 周课表</sub></p>
 
-> 截图仅用于展示应用功能；截图中的第三方图片、人物形象、字体等版权归原作者所有。若权利人认为使用不当或涉及侵权，请通过我的 GitHub 主页（https://github.com/moonquake25104）联系我，我会在确认后及时删除或替换相关图片。
+<p align="center">
+  <a href="docs/images/campus.jpg"><img src="docs/images/campus.jpg" width="236" alt="校园页，展示空闲教室、图书馆预约等入口"></a>
+  <a href="docs/images/focus.jpg"><img src="docs/images/focus.jpg" width="236" alt="专注时光，展示番茄专注和休息模式"></a>
+</p>
+<p align="center"><sub>校园服务 · 专注时光</sub></p>
 
-## 功能
+<p align="center">
+  <a href="docs/images/appearance.jpg"><img src="docs/images/appearance.jpg" width="236" alt="外观设置，展示三种风格和配色选项"></a>
+  <a href="docs/images/weekly-widget.jpg"><img src="docs/images/weekly-widget.jpg" width="236" alt="Android 桌面上的半透明七天课表小组件"></a>
+</p>
+<p align="center"><sub>外观设置 · 七天课表小组件</sub></p>
 
-### 课表：一次保存，整学期离线看
-
-- 首次从教务保存后，断网也能查看整学期课表
-- 支持 18 周、5 天/7 天显示、校区作息和个人编辑
-- 课程可以单独改颜色、时间、地点，临时调整也能自己安排
-- 首页直接显示今天要上的课和下一节安排
-
-### 桌面小组件：不用打开 App 也能看
-
-- 专注 2×2、今明课表 4×2、五天课表 4×4、七天课表 4×4
-- 两种周课表可以同时添加，按北京时间显示本周
-- 三档背景不透明度，默认微透，统一应用到四种组件
-- 课表组件打开课表，专注组件打开专注时光
-
-### 教务：本人登录，按需更新
-
-- 由你在学校官方页面完成登录，App 不要求你把密码交给开发者
-- 登录后可更新课表、查询空闲教室
-- 教务会话使用 Android Keystore 加密保存在本机
-
-### 上课提醒
-
-- 按本机课表提前 5、10、15 或 30 分钟提醒
-- 更新或编辑课表后自动重新安排
-- 通知、精确闹钟权限按需申请，并提供测试通知
-
-### 校园工具：少开几个网页
-
-- 空闲教室查询
-- 图书馆、学校邮箱等官方入口
-- 校园指南：校历、校区地图、常用电话、校车、校园信息
-- 专注计时与待办清单
-
-### 专注与待办
-
-- 番茄钟、正计时、白噪音和专注记录
-- 待办支持今天、重要、逾期等视图
-- 通知、提醒和勿扰权限按需申请，不需要时不会打扰
-
-### 时间与计划
-
-- 倒计时、倒数日和计划表
-- 首页只展示已经保存的对应内容，不额外打扰
-
-### 三种外观，五种配色
-
-- **经典**：干净、克制，适合日常
-- **液态玻璃**：半透明层次和柔和光影
-- **安卓原生**：更贴近系统组件的观感
-- 配色：原色、松间青、雾海蓝、云藤紫、暖杏
-- 支持浅色、深色和跟随系统
-
-### 数据留在本机
-
-课表、待办、专注记录和自定义背景主要保存在设备上；没有开发者广告 SDK，也不会把这些记录主动上传。待办和专注记录支持 JSON 备份与恢复，换机或重装前可以自己留一份。图书馆、邮箱等外部网页仍适用对应服务方的规则。
+截图用于展示应用功能，其中的第三方素材归原权利人所有。如需联系维护者，可通过 GitHub 主页反馈。 [维护者主页](https://github.com/moonquake25104)
 
 ## 下载与安装
 
-- 最新版本：[GitHub Releases](https://github.com/moonquake25104/HENUBox/releases)
-- 本次更新：[v0.1.3 更新说明](docs/releases/v0.1.3.md)
-- 系统要求：Android 9 及以上，arm64-v8a
-- 覆盖安装（需与已安装版本签名一致）即可保留本机课表、待办、专注记录和自定义背景
-- 这是学习交流项目，不提供学校账号代理，也不代表学校官方
+- 下载 Release 附件中的 APK。系统要求 Android 9 及以上，arm64-v8a。 [GitHub Releases](https://github.com/moonquake25104/HENUBox/releases)
+- 覆盖安装要求新旧 APK 签名一致，满足条件即可保留本机课表、待办、专注记录和自定义背景。
 
-## 一起完善河小盒
+## 隐私与安全
 
-河小盒目前由个人维护，功能范围保持稳定，优先修复问题和打磨体验。但一个校园工具想真正好用，需要更多使用它的人一起提意见。
+HENUBox 是非学校官方应用。学校账号由你在学校页面登录，教务会话使用 Android Keystore 加密保存在本机。课表、待办、专注记录和自选媒体保存在设备，应用不会主动上传这些记录。图书馆、邮箱等外部网页仍适用各自的隐私规则。 [隐私说明](docs/PRIVACY.md)
 
-欢迎从这些方向参与：
+## 参与贡献
 
-- **反馈问题**：说明机型、系统版本、复现步骤和预期结果；请先去掉姓名、学号、密码、Cookie 和个人课表
-- **适配机型**：不同厂商的通知、后台、勿扰和权限策略差异很大，欢迎帮忙测试
-- **改进解析**：学校页面和教务系统会变化，遇到解析失败可以提供脱敏后的结构说明
-- **界面与交互**：三种外观、配色、排版、动效和无障碍都可以继续打磨
-- **文档与测试**：补充构建说明、隐私说明、回归用例，或者帮忙校对文案
-- **分享给同学**：如果它确实帮你省了一点时间，欢迎推荐给需要的人
-
-提交代码前请先阅读 [贡献说明](CONTRIBUTING.md)；安全问题请按 [安全反馈](SECURITY.md) 私下联系，不要在公开 Issue 里贴凭据或个人信息。
+欢迎反馈使用问题、测试不同机型，也欢迎改进教务解析、界面、无障碍和文档。反馈时建议提供机型、系统版本和复现步骤，去除姓名、学号、凭据和个人课表。安全问题请走私下反馈渠道。 [提交 Issue](https://github.com/moonquake25104/HENUBox/issues) · [贡献说明](CONTRIBUTING.md) · [安全反馈](SECURITY.md)
 
 ## 开发与构建
 
-界面使用 React + TypeScript + Vite，Android 壳使用 Capacitor + Java/Kotlin，课表解析使用 Go。具体工具版本、构建命令和测试入口见 [开发说明](docs/BUILDING.md)。
+界面使用 React、TypeScript 和 Vite，Android 壳使用 Capacitor、Java 和 Kotlin，课表解析使用 Go。 [开发说明](docs/BUILDING.md)
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/build-android.ps1 -InstallDependencies
 ```
 
-构建产物在 `App/mobile/android/app/build/outputs/apk/`。源码结构、模块说明和发布流程分别在 `App/`、`docs/` 和 [发布说明](docs/PUBLISHING.md) 中。
-
-## 隐私与安全
-
-课表、待办、专注记录和自选媒体主要保存在设备；学校登录由用户在学校页面完成，教务会话由 Android Keystore 保护。通知、提醒、勿扰等权限按需申请。详见 [隐私说明](docs/PRIVACY.md) 与应用内“我的 → 关于HENUBox”。
-
-不承诺不存在漏洞。反馈问题时请勿附带凭据、Cookie、学号、个人课表或未脱敏截图。
+构建产物位于 `App/mobile/android/app/build/outputs/apk/`。 [发布说明](docs/PUBLISHING.md)
 
 ## 许可与致谢
 
-代码沿用上游 [MIT 许可证](LICENSE)，保留 Kairos 原始版权，并注明 HENUBox 维护者 [moonquake25104](https://github.com/moonquake25104) 的版权。第三方源码、依赖与素材的许可列在 [第三方致谢](THIRD_PARTY_NOTICES.md)，并可在应用内离线查看。
+代码沿用 Kairos 的 MIT 许可，保留原始版权及 HENUBox 维护者署名。第三方源码、依赖与素材的许可也可在应用内离线查看。 [MIT 许可证](LICENSE) · [第三方致谢](THIRD_PARTY_NOTICES.md)
 
 感谢 Kairos、React、Capacitor、Radix UI、Lucide、AndroidX/Compose、Kotlin、Go、AndroidLiquidGlass/Backdrop、字体与音频作者，以及参与测试和分享建议的朋友。
