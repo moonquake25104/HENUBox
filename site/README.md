@@ -9,4 +9,4 @@
 - 自定义域名：`CNAME`
 - 本地预览：在 `site` 目录运行静态 HTTP 服务，然后打开 `http://127.0.0.1:4173/`
 
-部署方式：GitHub Pages → Source 选择 **Deploy from a branch**，分支 `main`，目录 `/site`。`henubox.ccwu.cc` 在 DNSHE 添加 CNAME 指向 `moonquake25104.github.io`，再在 Pages 设置里填写自定义域名并开启 HTTPS。
+部署方式：GitHub Pages → Source 选择 **GitHub Actions**，由仓库内的 `.github/workflows/pages.yml` 发布 `site/`。`henubox.ccwu.cc` 在 DNSHE 添加 CNAME 指向 `moonquake25104.github.io`，再在 Pages 设置里填写自定义域名并开启 HTTPS。
